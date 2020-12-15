@@ -34,7 +34,6 @@ def sentiment_analysys():
     lemmatizer = WordNetLemmatizer()
 
     #text = input("Enter the text to analyse:")
-    #"I'm super excited to see you at this excellent danger!" 
     f = open('test_documents/test1_positive.txt')
     text = f.read().replace('\n', '')
     text.translate(str.maketrans('', '', string.punctuation)) #remove punctuation signs
