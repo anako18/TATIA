@@ -1,4 +1,3 @@
-
 import nltk
 from nltk.stem import WordNetLemmatizer
 import xml.dom.minidom
@@ -82,6 +81,7 @@ def binaryResult(value, limit):
     else:
         return "1"
 
+#return -1 if negative 0 if neutral and 1 if positive
 def processPhraseValence(phrase):
     negative_count = 0
     positive_count = 0
@@ -132,7 +132,7 @@ def processPhraseEmotions(phrase):
             surprise_count+=1  
         total_count+=1
 
-    limit = total_count*0.1 #if emotion is in >= 10% of words => emotion exists 
+    limit = total_count*0.05 #if emotion is in >= 5% of words => emotion exists 
     return "{} {} {} {} {} {}".format(
         binaryResult(anger_count, limit),
         binaryResult(disgust_count, limit), 
