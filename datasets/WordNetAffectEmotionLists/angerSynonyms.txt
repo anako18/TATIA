@@ -1,3 +1,4 @@
+bomber
 anger
 ire
 ira
@@ -836,3 +837,6 @@ enfuriate
 the_green-eyed_monster
 with_hostility
 wrath
+mortar
+hostage
+

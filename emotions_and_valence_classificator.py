@@ -32,46 +32,46 @@ def load_datasets_emotions():
     global surprise_words
 
     #read anger words
-    f = open('datasets/WordNetAffectEmotionLists/anger.txt', 'r') 
-    anger_words = [word for line in f for word in line.split()]
+    f = open('datasets/WordNetAffectEmotionLists/angerSynonyms.txt', 'r') 
+    anger_words = [word.lower() for line in f for word in line.split()]
     f.close()
 
     #read disgust words
-    f = open('datasets/WordNetAffectEmotionLists/disgust.txt', 'r') 
-    disgust_words = [word for line in f for word in line.split()]
+    f = open('datasets/WordNetAffectEmotionLists/disgustSynonyms.txt', 'r') 
+    disgust_words = [word.lower() for line in f for word in line.split()]
     f.close()
 
     #read fear words
-    f = open('datasets/WordNetAffectEmotionLists/fear.txt', 'r') 
-    fear_words = [word for line in f for word in line.split()]
+    f = open('datasets/WordNetAffectEmotionLists/fearSynonyms.txt', 'r') 
+    fear_words = [word.lower() for line in f for word in line.split()]
     f.close()
 
     #read joy words
-    f = open('datasets/WordNetAffectEmotionLists/joy.txt', 'r') 
-    joy_words = [word for line in f for word in line.split()]
+    f = open('datasets/WordNetAffectEmotionLists/joySynonyms.txt', 'r') 
+    joy_words = [word.lower() for line in f for word in line.split()]
     f.close()
 
     #read sadness words
-    f = open('datasets/WordNetAffectEmotionLists/sadness.txt', 'r') 
-    sadness_words = [word for line in f for word in line.split()]
+    f = open('datasets/WordNetAffectEmotionLists/sadnessSynonyms.txt', 'r') 
+    sadness_words = [word.lower() for line in f for word in line.split()]
     f.close()
 
     #read surprise words
-    f = open('datasets/WordNetAffectEmotionLists/surprise.txt', 'r') 
-    surprise_words = [word for line in f for word in line.split()]
+    f = open('datasets/WordNetAffectEmotionLists/surpriseSynonyms.txt', 'r') 
+    surprise_words = [word.lower() for line in f for word in line.split()]
     f.close()
 
 def load_datasets_sentiments():
     global negative_words
     global positive_words
     #read negative words
-    f = open('datasets/sentiments/negative-words.txt', 'r') 
-    negative_words = [word for line in f for word in line.split()]
+    f = open('datasets/sentiments/negativewordsSynonyms.txt', 'r') 
+    negative_words = [word.lower() for line in f for word in line.split()]
     f.close()
 
     #read positive words
-    f = open('datasets/sentiments/positive-words.txt', 'r') 
-    positive_words = [word for line in f for word in line.split()]
+    f = open('datasets/sentiments/positivewordsSynonyms.txt', 'r') 
+    positive_words = [word.lower() for line in f for word in line.split()]
     f.close()
 
 #============================Process phrases============================
@@ -81,13 +81,16 @@ def binaryResult(value, limit):
     else:
         return "1"
 
+def preprocessPhrase(phrase):
+    phrase = phrase.replace('\n', '')
+    phrase = phrase.translate(str.maketrans('', '', string.punctuation)) #remove punctuation signs
+    return phrase
+
 #return -1 if negative 0 if neutral and 1 if positive
 def processPhraseValence(phrase):
     negative_count = 0
     positive_count = 0
     total_count = 0
-    phrase = phrase.replace('\n', '')
-    phrase.translate(str.maketrans('', '', string.punctuation)) #remove punctuation signs
     words = nltk.word_tokenize(phrase)
     for word in words:
         word_lemmatized = lemmatizer.lemmatize(word)
@@ -96,9 +99,10 @@ def processPhraseValence(phrase):
         elif word_lemmatized in negative_words:
             negative_count+=1
         total_count+=1
-    if negative_count > positive_count:
+    limit = total_count*0.1
+    if negative_count - positive_count > limit:
         return "-1"
-    elif negative_count < positive_count:
+    elif negative_count - positive_count > limit:
         return "1"
     else:
         return "0"
@@ -113,8 +117,6 @@ def processPhraseEmotions(phrase):
     sadness_count = 0
     surprise_count = 0
     total_count = 0
-    phrase = phrase.replace('\n', '')
-    phrase.translate(str.maketrans('', '', string.punctuation)) #remove punctuation signs
     words = nltk.word_tokenize(phrase)
     for word in words:
         word_lemmatized = lemmatizer.lemmatize(word)
@@ -132,7 +134,7 @@ def processPhraseEmotions(phrase):
             surprise_count+=1  
         total_count+=1
 
-    limit = total_count*0.05 #if emotion is in >= 5% of words => emotion exists 
+    limit = 0.1 #if emotion is in >= n% of words => emotion exists
     return "{} {} {} {} {} {}".format(
         binaryResult(anger_count, limit),
         binaryResult(disgust_count, limit), 
@@ -143,23 +145,21 @@ def processPhraseEmotions(phrase):
     )
 
 #============================Load data for training and for testing============================
-def processDataValence(data, outputFilePath):
-    f = open(outputFilePath, 'w+')
+def processData(data, outputFilePathEmotions, outputFilePathValence):
+    fileEmotions = open(outputFilePathEmotions, 'w+')
+    fileValence = open(outputFilePathValence, 'w+')
     for id, phrase in data.items():
-        f.write('{} {}\n'.format(id, processPhraseValence(phrase)))
-    f.close()
-
-def processDataEmotions(data, outputFilePath):
-    f = open(outputFilePath, 'w+')
-    for id, phrase in data.items():
-        f.write('{} {}\n'.format(id, processPhraseEmotions(phrase)))
-    f.close()
+        phrase = preprocessPhrase(phrase)
+        fileValence.write('{} {}\n'.format(id, processPhraseValence(phrase)))
+        fileEmotions.write('{} {}\n'.format(id, processPhraseEmotions(phrase)))
+    fileEmotions.close()
+    fileValence.close()
 
 def loadXmlData(xmlFilePath, data):
     xmldoc = minidom.parse(xmlFilePath)
     nodelist = xmldoc.getElementsByTagName('instance')
     for node in nodelist:
-        data[node.getAttribute('id')] = node.firstChild.nodeValue
+        data[node.getAttribute('id')] = node.firstChild.nodeValue.lower()
 
 load_datasets_emotions()
 load_datasets_sentiments()
@@ -167,7 +167,5 @@ load_datasets_sentiments()
 loadXmlData('datasets/AffectiveText.trial/affectivetext_trial.xml', training_data)
 loadXmlData('datasets/AffectiveText.test/affectivetext_test.xml', test_data)
 
-processDataValence(training_data, 'results/trial-valence.gold')
-processDataValence(test_data, 'results/test-valence.gold')
-processDataEmotions(training_data, 'results/trial-emotions.gold')
-processDataEmotions(test_data, 'results/test-emotions.gold')
+processData(training_data, 'results/trial-emotions.gold', 'results/trial-valence.gold')
+processData(test_data, 'results/test-emotions.gold', 'results/test-valence.gold')

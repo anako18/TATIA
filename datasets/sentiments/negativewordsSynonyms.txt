@@ -1,3 +1,5 @@
+decline
+bomber
 ungrammatical
 wrecking_bar
 nebulous
@@ -12579,3 +12581,6 @@ unexpended
 rick
 tick_over
 rottenness
+mortar
+hostage
+feared

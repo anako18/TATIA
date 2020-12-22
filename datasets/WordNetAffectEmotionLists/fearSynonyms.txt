@@ -1,3 +1,4 @@
+bomber
 shadower
 savvy
 brisk
@@ -414,3 +415,6 @@ forecast
 warning_device
 vile
 disinclination
+mortar
+hostage
+feared
