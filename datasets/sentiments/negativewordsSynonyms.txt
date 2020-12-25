@@ -36,8 +36,72 @@ weakens
 restriction
 hacker
 arrogant
+fat
+demolished
+demolish
+clash
+wrangle
+snapped
+choked
+choke
+bloody
+bulling
+locked
+lock
+infamous
+abortion
+raid
+disturbing
+disturb
+coli
+evacuate
+dropped
+drop
+quitting
+quit
+idiotic
+bomb
+flooding
+torn
+scuffle
+flee
+slain
+dismisses
+dismiss
+tainted
+taint
+died
+ban
+huffing
+huff
+shooting
+gunman
+mock
+dy
+comatose
+suspected
+abducting
+abduct
+crackup
+alzheimers
+unarmed
+hiding
+hide
+military
+militia
+danger
+faulty
+collision
+tragedy
+nuclear
+fatal
+confusion
+fault
+backfire
+stifle
+calamity
+bomblet
 decline
-evaded
 pill
 poison
 bomber
@@ -177,7 +241,6 @@ contrive
 anxiety
 immoderate
 stutters
-decline
 thread_maker
 douchbag
 surly
@@ -235,7 +298,6 @@ sprinkling
 squawk
 recess
 tentatively
-bloody
 pile
 chin_music
 implode
@@ -482,7 +544,6 @@ fatten_up
 sinkhole
 unintelligibility
 cozen
-Lie
 spay
 track
 poor_people
@@ -847,7 +908,6 @@ smelly
 nonplused
 defensive_attitude
 isolation
-disturbing
 dog
 consummate
 handclasp
@@ -892,7 +952,6 @@ stink
 free_radical
 stock
 fidgety
-danger
 thunder
 lolly
 outweigh
@@ -1352,7 +1411,6 @@ objector
 quag
 perfidy
 backside
-killed
 cytologic_smear
 palter
 keister
@@ -1671,7 +1729,6 @@ thickened
 persistent
 flurry
 mob
-poverty
 madden
 needlessly
 dart
@@ -1812,7 +1869,6 @@ garboil
 bottle_up
 ill-bred
 lone
-attack
 infidel
 insalubrious
 stingy
@@ -1937,7 +1993,6 @@ insanity
 deep
 rough_out
 Janus-faced
-Cancer
 unconsecrated
 comminute
 smarmy
@@ -2109,7 +2164,7 @@ unpredictably
 foxiness
 crushed_leather
 punk_rock
-false
+FAUX
 funny_farm
 fricative
 fascistic
@@ -2273,7 +2328,6 @@ taradiddle
 clogged
 deduction
 squirm
-stifle
 advert
 bog_down
 meet
@@ -2388,7 +2442,6 @@ turn_back
 oath
 dissenting
 demolition
-tension
 also-ran
 convoluted
 questionably
@@ -2836,7 +2889,6 @@ spurned
 maul
 bouldered
 scorn
-torn
 sanguinary
 frustratingly
 desiccate
@@ -2847,7 +2899,6 @@ sourly
 infringement
 disrespectable
 sickeningly
-fighting
 hen-peck
 slow-witted
 ill-starred
@@ -3234,7 +3285,6 @@ become_flat
 crankiness
 charnel
 incompatability
-raid
 deluded
 repetitious
 drive
@@ -3243,7 +3293,6 @@ Irish_bull
 tinny
 railroad_siding
 mesmerise
-ban
 avoirdupois
 costlier
 insistent
@@ -3529,7 +3578,6 @@ slogs
 nakedness
 gangrenous
 chitchat
-disturb
 funnily
 zombie_spirit
 wan
@@ -3710,7 +3758,6 @@ smudge
 brutalities
 fatalist
 antagonist
-fatal
 comical
 recourses
 twisty
@@ -3760,7 +3807,6 @@ stumbles
 encounter
 dry
 hypocritically
-difficult
 form
 undervalue
 hesitancy
@@ -3918,7 +3964,6 @@ stupidly
 flaw
 craze
 expropriation
-hide
 implore
 cod
 malaise
@@ -4195,7 +4240,6 @@ flaking
 inefficacy
 tin-y
 skittish
-arrogance
 slash
 ado
 in_low_spirits
@@ -4526,7 +4570,6 @@ constant
 usurper
 cartoonish
 soften
-infamous
 dogmatism
 overtaxed
 go_along
@@ -4565,7 +4608,6 @@ alienated
 biased
 spine
 thankless
-quit
 religious_outcast
 freshness
 groan
@@ -4752,7 +4794,6 @@ lustrelessness
 thrill
 despicable
 mistakes
-calamity
 dissing
 uninstructed
 seriously
@@ -4882,7 +4923,6 @@ pied
 chicken_feed
 teddy
 unusable
-backfire
 break_open
 wretched
 infuriatingly
@@ -5363,7 +5403,6 @@ grainy
 mendicant
 wrench
 traitorous
-arrogant
 negate
 know_apart
 enflame
@@ -5891,7 +5930,6 @@ publication
 apostasy
 fag
 untitled
-fault
 tire
 embroiled
 challenger
@@ -6244,7 +6282,6 @@ derisorily
 uninsured
 weather_sheet
 lightsomeness
-Dy
 disintegrated
 clang
 softheartedness
@@ -6302,13 +6339,11 @@ jagged
 protrusion
 tatty
 implike
-poison
 brainsick
 drifter
 expire
 suppression
 beat-up
-wrangle
 bushed
 moan
 obsolete
@@ -6325,7 +6360,6 @@ lapsed
 unretrievable
 leakage
 curt
-fat
 pout
 tinge
 snagged
@@ -6819,7 +6853,6 @@ elicit
 inflammation
 rearing
 snobish
-mock
 inaccurately
 battering
 beggar
@@ -7019,7 +7052,6 @@ estrange
 posterior
 careless
 surmise
-condemns
 acerbic
 clog_dance
 stretch
@@ -7287,7 +7319,6 @@ bull
 negatives
 spur
 focus
-confusion
 salaciousness
 diseased
 pathetic
@@ -7305,7 +7336,6 @@ enrage
 dehydrated
 hero
 displace
-scuffle
 infamously
 pettifog
 jilted
@@ -7319,6 +7349,7 @@ amends
 deviate
 glitches
 rejected
+reject
 drag_one's_feet
 indecent
 demoniacally
@@ -7433,7 +7464,6 @@ entrap
 tipster
 oppression
 surety
-bomber
 wantonly
 avoid
 overtop
@@ -7572,7 +7602,6 @@ flaws
 helplessness
 set-apart
 debaucher
-drop
 motley
 abysmally
 bathetic
@@ -7844,7 +7873,6 @@ exorbitantly
 woman_of_the_street
 come_down
 get_onto
-tainted
 threaten
 vixen
 lewd
@@ -7947,7 +7975,6 @@ villainous
 bastards
 sales_booth
 freeze_out
-choke
 Greek_fret
 sibilate
 slip_up
@@ -8048,7 +8075,6 @@ portentous
 steal
 grand
 slothful
-condemned
 shortfall
 craftiness
 chevvy
@@ -8176,7 +8202,6 @@ punch-drunk
 sound_off
 stick-in-the-mud
 lam
-demolish
 needy
 thumb-down
 liquidator
@@ -8344,6 +8369,7 @@ robustious
 screwing
 bullheadedness
 jailed
+jail
 intransigence
 words
 offender
@@ -8645,7 +8671,6 @@ askance
 expiate
 make_love
 bunko
-marred
 perturbing
 undermining
 travesty
@@ -9411,7 +9436,6 @@ tike
 wacky
 eat
 unappreciated
-protest
 drawbacks
 slovenly_woman
 manufacturing
@@ -9454,7 +9478,6 @@ nonreversible
 kooky
 bobble
 rant
-hurting
 bearded_darnel
 penny-pinching
 figure_out
@@ -9516,7 +9539,6 @@ flatter
 selfishly
 clamouring
 volatile
-jail
 roadster
 disagrees
 clotted
@@ -9674,7 +9696,6 @@ gin
 sh*t
 defraud
 seethe
-flee
 extermination
 subterfuge
 mournful
@@ -9709,7 +9730,6 @@ diabolically
 baleful
 smirch
 disquietingly
-faulty
 entangled
 overtax
 scoldingly
@@ -9829,7 +9849,6 @@ cut_off
 whatchamacallit
 mephistophelean
 liability
-reject
 essence
 felt_up
 inordinate
@@ -9884,7 +9903,6 @@ gob
 disillusioned
 cyprian
 gracelessly
-damned
 bemuse
 uprooter
 green-eyed
@@ -10051,7 +10069,6 @@ bleached
 immunity
 ostracise
 huffy
-idiotic
 cissy
 look_across
 tumefy
@@ -10082,7 +10099,6 @@ patronize
 quail
 maligner
 irresolution
-hacker
 pornography
 bemusement
 dumbass
@@ -10163,7 +10179,6 @@ estrangement
 find
 dormant
 infections
-illegal
 trampling
 swot
 protesting
@@ -10255,7 +10270,6 @@ burning
 untrue
 chide
 deuce-ace
-taint
 flood_out
 event
 talk_through_one's_hat
@@ -10263,7 +10277,6 @@ distraught
 unthinkable
 downswing
 slickness
-dismiss
 insufficient
 destroyed
 prisonbreak
@@ -10317,9 +10330,7 @@ reprovingly
 late
 mischief-making
 collude
-tragedy
 froze
-choked
 get_it_on
 misinformed
 perfidious
@@ -10834,12 +10845,10 @@ underestimate
 hard-hit
 tyrant
 demoralise
-died
 ill-gotten
 uproar
 unredeemable
 inveigh
-clash
 deadweight
 ball_over
 simulation
@@ -11791,7 +11800,6 @@ uglier
 grease_one's_palms
 bewilderment
 obstacle
-restriction
 prodigal
 frozen
 grumpiest
@@ -11867,7 +11875,6 @@ second-rater
 be_intimate
 sulky
 suck_up
-bomb
 droopy
 rife
 one-sided
@@ -12092,7 +12099,6 @@ anarchy
 neurotically
 beastly
 trouble_maker
-violent
 toughened
 run_away
 vexed
@@ -12462,7 +12468,6 @@ solve
 undercuts
 ferocious
 deposit
-massacre
 inane
 surround
 palaver
@@ -12590,7 +12595,6 @@ gate-crash
 plaint
 imprecate
 roue
-huff
 ingratitude
 suave
 hassled
@@ -12623,5 +12627,4 @@ rick
 tick_over
 rottenness
 mortar
-hostage
 feared
