@@ -1,14 +1,42 @@
 
 results =[]
+lenth = 0
 
-def convertFile(file1, file2):
+lines =[]
+limit = 10
+def binaryResult(value, limit):
+    if value < limit:
+        return "0"
+    else:
+        return "1"
+        
+def convertEmotionFile(file1,file2):
+    global lines
+    global limit 
+    f = open(file1, 'r') 
+    lines = [line for line in f]
+    f.close()
+    f = open(file2, 'w') 
+    for line in lines:
+        result = [int(l) for l in line.split() ]
+        i = 1
+        f.write( str(result[0]) +" ")
+        while i < len(result):
+           f.write( binaryResult( result[i],limit) +" ")
+           i+=1
+        f.write("\n")  
+        
+    f.close()
+
+def convertValenceFile(file1, file2):
     global results
+    lenth = 0
     f = open(file1, 'r') 
     results = [int(word) for line in f for word in line.split()]
     f.close()
     file = open(file2, 'w')
     i = 0
-    while i < len(results)-1:
+    while i < len(results):
         value = results[i+1]
         index = results[i]
         if value > 0:
@@ -17,7 +45,7 @@ def convertFile(file1, file2):
             file.write(str(index) +" -1\n")
         if value == 0:
             file.write(str(index) +" 0\n")
-       
+        lenth +=1
         i+=2
     file.close()
 
@@ -34,86 +62,74 @@ resultTest = "results/test-valence.gold"
 resultTrial2 = "resultswithwords/trial-valence_positive.gold"
 resultTest2 = "resultswithwords/test-valence_positive.gold"
 
+emotionTrial = "datasets/AffectiveText.trial/affectivetext_trial.emotions.gold"
+fileemotionTrial = "datasets/AffectiveText.trial/emotions.gold"
 
-convertFile(fTrial,fileTrial) 
-convertFile(fTest,fileTest) 
+emotionTest = "datasets/AffectiveText.test/affectivetext_test.emotions.gold"
+fileemotionTest = "datasets/AffectiveText.test/emotions.gold"
 
 
-def compaireFiles(file1,file2):
+emotionTrialResult = "results/trial-emotions.gold"
+emotionTestResult = "results/test-emotions.gold"
+
+convertEmotionFile(emotionTrial,fileemotionTrial)   
+convertEmotionFile(emotionTestResult,fileemotionTest) 
+
+
+convertValenceFile(fTrial,fileTrial) 
+convertValenceFile(fTest,fileTest) 
+
+def compaireValenceFiles(file1,file2):
     f1 = open(file1, 'r') 
-    result1 = [int(word) for line in f1 for word in line.split()]
+    result1 = [word for line in f1 for word in line.split()]
     f1.close()
     
     f2 = open(file2, 'r') 
-    result2 = [int(word) for line in f2 for word in line.split()]
+    result2 = [word for line in f2 for word in line.split()]
     f2.close()
     erreur =0
     i = 0
     while i < len(result1):
-        if result1[i] != result2[i]:
-            if abs(result1[i]-result2[i]) == 1 :
-                erreur += 0.7
-            else:
-                erreur +=1
-        i += 1
-    pourcentageErreur = erreur*100/len(result1)
+        if result1[i+1].strip() != result2[i+1].strip():
+            erreur +=1
+        i += 2
+    pourcentageErreur = erreur*100/(len(result1) /2)
     pourcentageCorrect = 100 - pourcentageErreur
-    print("in file "+file2 +" erreur  is "+ str(pourcentageErreur) +" % and correct is "+ str(pourcentageCorrect))
+    print("in file "+file2 +" erreur  is "+ str(pourcentageErreur) +" % and correct is "+ str(pourcentageCorrect) +"% nb of erreurs "+str(erreur) + " / " + str(int(len(result1)/2)))
     
-compaireFiles(fileTrial,resultTrial2) 
-compaireFiles(fileTest,resultTest2)   
- 
-compaireFiles(fileTrial,resultTrial)  
-compaireFiles(fileTest,resultTest)  
+
+compaireValenceFiles(fileTrial,resultTrial)  
+compaireValenceFiles(fileTest,resultTest)  
+
+
+def compaireEmotionFiles(file1,file2):
+    f1 = open(file1, 'r') 
+    result1 = [line for line in f1 ]
+    f1.close()
     
-"""
-Erreur fatal
-in file resultsWithpositive/trial-valence_positive.gold erreur  is 7.6 % and correct is 92.4
-in file resultsWithpositive/test-valence_positive.gold erreur  is 8.55 % and correct is 91.45
-in file results/trial-valence.gold erreur  is 9.8 % and correct is 90.2
-in file results/test-valence.gold erreur  is 10.25 % and correct is 89.75
-
-Erreur 
-
-in file resultsWithpositive/trial-valence_positive.gold erreur  is 22.6 % and correct is 77.4
-in file resultsWithpositive/test-valence_positive.gold erreur  is 25.75 % and correct is 74.25
-in file results/trial-valence.gold erreur  is 24.6 % and correct is 75.4
-in file results/test-valence.gold erreur  is 24.6 % and correct is 75.4
-
-
-Eureur non fatal is count 0.7 instead of 1 
-in file resultsWithpositive/trial-valence_positive.gold erreur  is 18.1% and correct is 81.89
-in file resultsWithpositive/test-valence_positive.gold erreur  is 20.5 % and correct is 79.4
-in file results/trial-valence.gold erreur  is 20.16 % and correct is 79.83
-in file results/test-valence.gold erreur  is 20.29 % and correct is 79.7
-
-
-"""
+    f2 = open(file2, 'r') 
+    result2 = [line for line in f2]
+    f2.close()        
+    erreur =0
+    i = 0
+    total = 0
+    while i < len(result1):
+        line1 = [l for l in result1[i].split() ]
+        line2 = [l for l in result2[i].split() ]
+        j =1
+        while j < len(line1):
+            if line1[j].strip() != line2[j].strip():
+                erreur +=1
+            j += 1
+            total += 1
+        i+=1
+    pourcentageErreur = erreur*100/total
+    pourcentageCorrect = 100 - pourcentageErreur
+    print("in file "+file2 +" erreur  is "+ str(pourcentageErreur) +" % and correct is "+ str(pourcentageCorrect) +"% nb of erreurs "+str(erreur) + " / " + str(total))
+        
 
 
+compaireEmotionFiles(fileemotionTrial,emotionTrialResult)    
 
-"""
-def processPhraseValence(phrase):
-    negative_count = 0
-    positive_count = 0
-    total_count = 0
-    words = nltk.word_tokenize(phrase)
-    for word in words:
-        word_lemmatized = lemmatizer.lemmatize(word)
-        if word_lemmatized in positive_words:
-            positive_count+=1
-        elif word_lemmatized in negative_words:
-            negative_count+=1
-        total_count+=1
-    limit = total_count*0.05
-    pourcentageNeg = negative_count*100/len(words)
-    pourcentagePos = positive_count*100/len(words)
-    pourcentageNeu = 100 -(pourcentageNeg + pourcentagePos)
-    if pourcentageNeu > pourcentageNeg and pourcentageNeu > pourcentagePos or pourcentageNeg == pourcentagePos  :
-        return "0"
-    elif  pourcentageNeg > pourcentagePos :
-        return "-1"
-    else:
-        return "1"
+compaireEmotionFiles(fileemotionTest,emotionTestResult)
 
-"""

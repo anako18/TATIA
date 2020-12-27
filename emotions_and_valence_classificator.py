@@ -23,6 +23,13 @@ positive_words = []
 lemmatizer = WordNetLemmatizer()
 
 #============================Load datasets============================
+
+def load_data(file):
+    f = open(file, 'r') 
+    words = [word.lower() for line in f for word in line.split()]
+    f.close()
+    return words
+
 def load_datasets_emotions():
     global anger_words
     global disgust_words
@@ -30,49 +37,37 @@ def load_datasets_emotions():
     global joy_words
     global sadness_words
     global surprise_words
-
-    #read anger words
-    f = open('datasets/WordNetAffectEmotionLists/angerSynonyms.txt', 'r') 
-    anger_words = [word.lower() for line in f for word in line.split()]
-    f.close()
-
-    #read disgust words
-    f = open('datasets/WordNetAffectEmotionLists/disgustSynonyms.txt', 'r') 
-    disgust_words = [word.lower() for line in f for word in line.split()]
-    f.close()
-
+    
+    anger_words = load_data('datasets/WordNetAffectEmotionLists/angerSynonyms.txt')
+    disgust_words = load_data('datasets/WordNetAffectEmotionLists/disgustSynonyms.txt') 
+    
     #read fear words
-    f = open('datasets/WordNetAffectEmotionLists/fearSynonyms.txt', 'r') 
-    fear_words = [word.lower() for line in f for word in line.split()]
-    f.close()
-
+    fear_words= load_data('datasets/WordNetAffectEmotionLists/fearSynonyms.txt') 
+    
     #read joy words
-    f = open('datasets/WordNetAffectEmotionLists/joySynonyms.txt', 'r') 
-    joy_words = [word.lower() for line in f for word in line.split()]
-    f.close()
-
+    joy_words = load_data('datasets/WordNetAffectEmotionLists/joySynonyms.txt') 
+    
     #read sadness words
-    f = open('datasets/WordNetAffectEmotionLists/sadnessSynonyms.txt', 'r') 
-    sadness_words = [word.lower() for line in f for word in line.split()]
-    f.close()
+    sadness_words = load_data('datasets/WordNetAffectEmotionLists/sadnessSynonyms.txt') 
+    
 
     #read surprise words
-    f = open('datasets/WordNetAffectEmotionLists/surpriseSynonyms.txt', 'r') 
-    surprise_words = [word.lower() for line in f for word in line.split()]
-    f.close()
+    surprise_words = load_data('datasets/WordNetAffectEmotionLists/surpriseSynonyms.txt')
 
 def load_datasets_sentiments():
     global negative_words
     global positive_words
     #read negative words
-    f = open('words/negative.txt', 'r') 
-    negative_words = [word.lower() for line in f for word in line.split()]
-    f.close()
+    negative_words= load_data('datasets/sentimentwords/negative.txt') 
 
     #read positive words
-    f = open('words/positive.txt', 'r') 
-    positive_words = [word.lower() for line in f for word in line.split()]
-    f.close()
+    positive_words= load_data('datasets/sentimentwords/positive.txt')
+
+def load_all_data():
+    load_datasets_emotions()
+    load_datasets_sentiments()
+
+
 
 #============================Process phrases============================
 def binaryResult(value, limit):
@@ -90,22 +85,25 @@ def preprocessPhrase(phrase):
 def processPhraseValence(phrase):
     negative_count = 0
     positive_count = 0
-    total_count = 0
     words = nltk.word_tokenize(phrase)
     for word in words:
         word_lemmatized = lemmatizer.lemmatize(word)
-        if word_lemmatized in positive_words:
-            positive_count+=1
-        elif word_lemmatized in negative_words:
-            negative_count+=1
-        total_count+=1
-    limit = total_count*0.1
-    if negative_count - positive_count > limit:
-        return "-1"
-    elif  positive_count - negative_count > limit:
+        if word_lemmatized in positive_words or word in positive_words:
+            positive_count += 1
+        elif word_lemmatized in negative_words or word in negative_words:
+            negative_count += 1
+
+    pourcentageNeg = negative_count*100/len(words)
+    pourcentagePos = positive_count*100/len(words)
+    pourcentageNeu = 100 - pourcentageNeg - pourcentagePos
+
+    if pourcentagePos  >pourcentageNeg   :
         return "1"
-    else:
-        return "0"
+    return "-1"
+    
+
+ 
+
         
         
 
@@ -122,7 +120,7 @@ def processPhraseEmotions(phrase):
     words = nltk.word_tokenize(phrase)
     for word in words:
         word_lemmatized = lemmatizer.lemmatize(word)
-        if word_lemmatized in anger_words:
+        if word_lemmatized in anger_words or word in anger_words :
             anger_count+=1
         elif word_lemmatized in disgust_words:
             disgust_count+=1
@@ -163,15 +161,12 @@ def loadXmlData(xmlFilePath, data):
     for node in nodelist:
         data[node.getAttribute('id')] = node.firstChild.nodeValue.lower()
 
-load_datasets_emotions()
-load_datasets_sentiments()
+load_all_data()
+
 
 loadXmlData('datasets/AffectiveText.trial/affectivetext_trial.xml', training_data)
 loadXmlData('datasets/AffectiveText.test/affectivetext_test.xml', test_data)
 
-processData(training_data, 'results/trial-emotions.gold', 'resultswithwords/trial-valence_positive.gold')
-processData(test_data, 'results/test-emotions.gold', 'resultswithwords/test-valence_positive.gold')
-"""
 processData(training_data, 'results/trial-emotions.gold', 'results/trial-valence.gold')
 processData(test_data, 'results/test-emotions.gold', 'results/test-valence.gold')
-"""
+
