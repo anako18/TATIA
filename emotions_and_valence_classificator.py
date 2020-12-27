@@ -65,12 +65,12 @@ def load_datasets_sentiments():
     global negative_words
     global positive_words
     #read negative words
-    f = open('datasets/sentiments/negativewordsSynonyms.txt', 'r') 
+    f = open('words/negative.txt', 'r') 
     negative_words = [word.lower() for line in f for word in line.split()]
     f.close()
 
     #read positive words
-    f = open('datasets/sentiments/positivewordsSynonyms.txt', 'r') 
+    f = open('words/positive.txt', 'r') 
     positive_words = [word.lower() for line in f for word in line.split()]
     f.close()
 
@@ -102,10 +102,12 @@ def processPhraseValence(phrase):
     limit = total_count*0.1
     if negative_count - positive_count > limit:
         return "-1"
-    elif negative_count - positive_count > limit:
+    elif  positive_count - negative_count > limit:
         return "1"
     else:
         return "0"
+        
+        
 
 
 #return a string with 0 or 1 in format: anger disgust fear joy sadness surprise
@@ -167,5 +169,9 @@ load_datasets_sentiments()
 loadXmlData('datasets/AffectiveText.trial/affectivetext_trial.xml', training_data)
 loadXmlData('datasets/AffectiveText.test/affectivetext_test.xml', test_data)
 
+processData(training_data, 'results/trial-emotions.gold', 'resultswithwords/trial-valence_positive.gold')
+processData(test_data, 'results/test-emotions.gold', 'resultswithwords/test-valence_positive.gold')
+"""
 processData(training_data, 'results/trial-emotions.gold', 'results/trial-valence.gold')
 processData(test_data, 'results/test-emotions.gold', 'results/test-valence.gold')
+"""
