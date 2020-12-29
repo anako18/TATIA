@@ -101,4 +101,4 @@ def compaireEmotionFiles(testFilePath, resultFilePath):
     totalAccuracy = 100 - totalErrors*100/(totalEmotions*6)
     print("Total emotion results: accuracy is {}, errors {}/{}".format(totalAccuracy, totalErrors, totalEmotions))
 
-compaireEmotionClassificationReport('datasets/AffectiveText.test/affectivetext_test.emotions.gold','results/test-emotions.gold')  
+compaireEmotionFiles('datasets/AffectiveText.test/affectivetext_test.emotions.gold','results/test-emotions.gold')  

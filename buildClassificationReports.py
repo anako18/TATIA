@@ -43,10 +43,10 @@ def compareValenceClassificationReport(testFilePath, resultFilePath, triple = 0)
             errorsCount+=1
         test_labels.append(testValenceValue)
         result_labels.append(resultValenceValue)
-
+    """
     print(confusion_matrix(test_labels,result_labels))
     print(classification_report(test_labels, result_labels))
-    
+    """
     correctAnswersPercent = 100 - errorsCount*100/total
     print("Total samples: {}, total errors count: {}, correct answers percentage: {}%".format(total, errorsCount, correctAnswersPercent))
 
@@ -97,18 +97,45 @@ def compaireEmotionClassificationReport(testFilePath, resultFilePath):
                 errorsCount+=1
             test_labels[key].append(testEmotionValue)
             result_labels[key].append(resultEmotionValue)
-    
+    """
     for key, value in emotions.items():
         print("================================== " + value + " ==================================")
         print(confusion_matrix(test_labels[key], result_labels[key]))
         print(classification_report(test_labels[key], result_labels[key]))
-    
+    """
     correctAnswersPercent = 100 - errorsCount*100/total
     print("Total samples: {}, total errors count: {}, correct answers percentage: {}%".format(total, errorsCount, correctAnswersPercent))
+    
+valenceFile = "datasets/AffectiveText.test/affectivetext_test.valence.gold"
+emotionFile = "datasets/AffectiveText.test/affectivetext_test.emotions.gold"
 
+valence_NaiveBayes = "results/test-valence_NaiveBayes.gold"
+valence_RuleBased = "results/test-valence_RuleBased.gold"
+
+emotions_NaiveBayes = "results/test-emotions_NaiveBayes.gold"
+emotions_RuleBased = "results/test-emotions_RuleBased.gold"    
+    
+    
+print("================================================ SVM ==========================================================")
 print("====================================== Valence binary =============================================")
-compareValenceClassificationReport('datasets/AffectiveText.test/affectivetext_test.valence.gold', 'results/test-valence.gold')
+compareValenceClassificationReport(valenceFile, 'results/test-valence_SVM.gold')
 print("====================================== Valence triple =============================================")
-compareValenceClassificationReport('datasets/AffectiveText.test/affectivetext_test.valence.gold', 'results/test-valence-triple.gold', 1)
+compareValenceClassificationReport(valenceFile, 'results/test-valence-triple_SVM.gold', 1)
 print("================================================ Emotions ==========================================================")
-compaireEmotionClassificationReport('datasets/AffectiveText.test/affectivetext_test.emotions.gold','results/test-emotions.gold')
+compaireEmotionClassificationReport(emotionFile,'results/test-emotions_SVM.gold')
+
+
+
+print("================================================ Rules Based ==========================================================")
+print("====================================== Valence triple =============================================")
+compareValenceClassificationReport(valenceFile, valence_RuleBased)
+print("================================================ Emotions ==========================================================")
+compaireEmotionClassificationReport(emotionFile,emotions_RuleBased)
+
+
+print("================================================ Naive Bayes ==========================================================")
+print("====================================== Valence triple =============================================")
+compareValenceClassificationReport(valenceFile, valence_NaiveBayes)
+print("================================================ Emotions ==========================================================")
+compaireEmotionClassificationReport(emotionFile,emotions_NaiveBayes)
+

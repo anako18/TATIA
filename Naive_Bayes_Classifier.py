@@ -5,11 +5,6 @@ from xml.dom import minidom
 import string
 import csv
 
-"""
-rename functions and variables
-pre proccess phrase add to dic lematize word 
-"""
-
 limit = 10
 
 def preprocessPhrase(phrase):
@@ -46,9 +41,7 @@ def convertValenceFile(file1, file2):
         index = result[i]
         if value > 0:
             file.write(str(index) +", 1\n")
-        if value < 0:
-            file.write(str(index) +", -1\n")
-        if value == 0:
+        else:
             file.write(str(index) +", 0\n")
         lenth +=1
         i+=2
@@ -393,7 +386,7 @@ def processPhraseValence(phrase):
     #maximun(positiveproba, positiveproba,neutralproba)
      
     if  negativeproba > neutralproba and  negativeproba > positiveproba :
-        return "-1"
+        return "0"
     if positiveproba > neutralproba and  positiveproba > negativeproba:
         return "1"
 
@@ -434,9 +427,8 @@ training(training_data)
 
 loadXmlData('datasets/AffectiveText.test/affectivetext_test.xml', test_data)
 
-outputfileTestEmotion = "datasets/AffectiveText.test/Naive_Bayes_emotions.gold"
+outputfileTestEmotion = "results/test-emotions_NaiveBayes.gold"
 
-outputfileTestValence = "datasets/AffectiveText.test/Naive_Bayes_valence.gold"
-
+outputfileTestValence = "results/test-valence_NaiveBayes.gold"
 
 processTest(test_data,outputfileTestValence,outputfileTestEmotion)        

@@ -96,7 +96,7 @@ def processPhraseValence(phrase):
 
     if pourcentagePos > pourcentageNeg:
         return "1"
-    return "-1"
+    return "0"
 
 #return a string with 0 or 1 in format: anger disgust fear joy sadness surprise
 def processPhraseEmotions(phrase):
@@ -157,5 +157,5 @@ load_all_data()
 loadXmlData('datasets/AffectiveText.trial/affectivetext_trial.xml', training_data)
 loadXmlData('datasets/AffectiveText.test/affectivetext_test.xml', test_data)
 
-processData(training_data, 'results/trial-emotions.gold', 'results/trial-valence.gold')
-processData(test_data, 'results/test-emotions.gold', 'results/test-valence.gold')
+#processData(training_data, 'results/trial-emotions.gold', 'results/trial-valence.gold')
+processData(test_data, 'results/test-emotions_RuleBased.gold', 'results/test-valence_RuleBased.gold')

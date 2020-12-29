@@ -50,34 +50,7 @@ def convertValenceFile(file1, file2):
     file.close()
 
 
-fTrial = "datasets/AffectiveText.trial/affectivetext_trial.valence.gold"
-fileTrial = "datasets/AffectiveText.trial/valence.gold"
 
-fTest = "datasets/AffectiveText.test/affectivetext_test.valence.gold"
-fileTest = "datasets/AffectiveText.test/valence.gold"
-
-resultTrial = "results/trial-valence.gold"
-resultTest = "results/test-valence.gold"
-
-resultTrial2 = "resultswithwords/trial-valence_positive.gold"
-resultTest2 = "resultswithwords/test-valence_positive.gold"
-
-emotionTrial = "datasets/AffectiveText.trial/affectivetext_trial.emotions.gold"
-fileemotionTrial = "datasets/AffectiveText.trial/emotions.gold"
-
-emotionTest = "datasets/AffectiveText.test/affectivetext_test.emotions.gold"
-fileemotionTest = "datasets/AffectiveText.test/emotions.gold"
-
-
-emotionTrialResult = "results/trial-emotions.gold"
-emotionTestResult = "results/test-emotions.gold"
-
-convertEmotionFile(emotionTrial,fileemotionTrial)   
-convertEmotionFile(emotionTestResult,fileemotionTest) 
-
-
-convertValenceFile(fTrial,fileTrial) 
-convertValenceFile(fTest,fileTest) 
 
 def compaireValenceFiles(file1,file2):
     f1 = open(file1, 'r') 
@@ -98,7 +71,6 @@ def compaireValenceFiles(file1,file2):
     print("in file "+file2 +" erreur  is "+ str(pourcentageErreur) +" % and correct is "+ str(pourcentageCorrect) +"% nb of erreurs "+str(erreur) + " / " + str(int(len(result1)/2)))
     
 
-compaireValenceFiles(fileTest,resultTest)  
 
 
 def compaireEmotionFiles(file1,file2):
@@ -125,17 +97,34 @@ def compaireEmotionFiles(file1,file2):
     pourcentageErreur = erreur*100/total
     pourcentageCorrect = 100 - pourcentageErreur
     print("in file "+file2 +" erreur  is "+ str(pourcentageErreur) +" % and correct is "+ str(pourcentageCorrect) +"% nb of erreurs "+str(erreur) + " / " + str(total))
-        
+
+
+valenceFile = "datasets/AffectiveText.test/affectivetext_test.valence.gold"
+valenceResult = "datasets/AffectiveText.test/valence.gold"
+
+
+emotionFile = "datasets/AffectiveText.test/affectivetext_test.emotions.gold"
+emotionResults = "datasets/AffectiveText.test/emotions.gold"
+
+
+convertEmotionFile(emotionFile,emotionResults) 
+
+
+convertValenceFile(valenceFile,valenceResult) 
 
 
 
-compaireEmotionFiles(fileemotionTest,emotionTestResult)
+valence_NaiveBayes = "results/test-valence_NaiveBayes.gold"
+valence_RuleBased = "results/test-valence_RuleBased.gold"
 
-resultTestValenceNaive = "datasets/AffectiveText.test/Naive_Bayes_valence.gold"
 
-compaireValenceFiles(fileTest,resultTestValenceNaive)  
+compaireValenceFiles(valenceResult,valence_NaiveBayes)  
+compaireValenceFiles(valenceResult,valence_RuleBased)  
 
-resultTestEmotionNaive = "datasets/AffectiveText.test/Naive_Bayes_emotions.gold"
-fileTestEmtion = "datasets/AffectiveText.test/emotions.gold"
+emotions_NaiveBayes = "results/test-emotions_NaiveBayes.gold"
+emotions_RuleBased = "results/test-emotions_RuleBased.gold"
 
-compaireEmotionFiles(fileTestEmtion,resultTestEmotionNaive)
+compaireEmotionFiles(emotionResults,emotions_NaiveBayes)
+compaireEmotionFiles(emotionResults,emotions_RuleBased)
+
+
