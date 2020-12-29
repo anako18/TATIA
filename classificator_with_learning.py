@@ -3,23 +3,21 @@ import string
 from nltk.corpus import stopwords
 import nltk
 from nltk.tokenize import word_tokenize
-from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn import svm
 from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix
 
 import xml.dom.minidom
 from xml.dom import minidom
 
 stop_words = set(stopwords.words('english'))
-lemmatizer = WordNetLemmatizer() 
+lemmatizer = WordNetLemmatizer()
 
 emotions_threshold = 30
 sentiments_threshold = 20
@@ -32,6 +30,9 @@ test_ids = []
 
 valence_training_labels = []
 valence_test_labels = []
+
+valence_triple_training_labels = []
+valence_triple_test_labels = []
 
 training_anger_labels = []
 training_disgust_labels = []
@@ -89,13 +90,13 @@ def getLabelTriple(value, threshold):
     global neut
     if (value >= threshold):
         pos+=1
-        return "positive"
+        return "1"
     elif (value < threshold) and (value > -1*threshold):
         neut+=1
-        return "neutral"
+        return "0"
     else:
         neg+=1
-        return "negative"
+        return "-1"
 
 #Positive or negative
 def getLabelBinary(value):
@@ -103,9 +104,9 @@ def getLabelBinary(value):
     global neg
     global neut
     if (value > 0):
-        return "positive"
+        return "1"
     else:
-        return "negative"
+        return "0"
 
 def loadXmlData(xmlFilePath, ids, data):
     xmldoc = minidom.parse(xmlFilePath)
@@ -156,6 +157,26 @@ def loadEmotionsLabelsTest(labelsFilePath):
         test_sadness_labels.append(emotionToBinary(int(emotions[5]), emotions_threshold))
         test_surprise_labels.append(emotionToBinary(int(emotions[6]), emotions_threshold))
 
+def writeValenceResultFile(test_ids, valence_result_file_path, labels):
+    fileValence = open(valence_result_file_path, 'w+')
+    for i in range(len(test_ids)):
+        fileValence.write('{} {}\n'.format(test_ids[i], labels[i]))
+    fileValence.close()
+
+def writeEmotionsResultFile(test_ids, emotions_result_file_path):
+    fileEmotions = open(emotions_result_file_path, 'w+')
+    for i in range(len(test_ids)):
+        fileEmotions.write('{} {} {} {} {} {} {}\n'.format(
+            test_ids[i], 
+            test_anger_labels[i], 
+            test_disgust_labels[i],
+            test_fear_labels[i],
+            test_joy_labels[i],
+            test_sadness_labels[i],
+            test_surprise_labels[i]
+        ))
+    fileEmotions.close()
+
 def classify(training_data, test_data, training_labels, test_labels):
     #vectorization with tfid
     vectorizer = TfidfVectorizer(ngram_range = (1,3), min_df=2, max_df = 0.8, sublinear_tf = True)
@@ -192,69 +213,75 @@ def classify(training_data, test_data, training_labels, test_labels):
     prediction_liblinear = classifier_liblinear.predict(test_vectors)
 
     print("===========================SVC(kernel=rbf)===========================")
+    print(confusion_matrix(test_labels, prediction_rbf))
     print(classification_report(test_labels, prediction_rbf))
 
     print("=========================== SVC(kernel=poly) ===========================")
+    print(confusion_matrix(test_labels, prediction_poly))
     print(classification_report(test_labels, prediction_poly))
 
     print("=========================== SVC(kernel=sigmoid) ===========================")
+    print(confusion_matrix(test_labels, prediction_sigmoid))
     print(classification_report(test_labels, prediction_sigmoid))
 
     print("=========================== SVC(kernel=linear) ===========================")
+    print(confusion_matrix(test_labels, prediction_linear))
     print(classification_report(test_labels, prediction_linear))
 
     print("=========================== LinearSVC ===========================")
+    print(confusion_matrix(test_labels, prediction_liblinear))
     print(classification_report(test_labels, prediction_liblinear))
         
-
-#0 => binary valence
-#1 => triple valence
-#2 => emotions
-mode = 2
-
+#Load common training and testing data
 loadXmlData('datasets/AffectiveText.trial/affectivetext_trial.xml', training_ids, training_data)
 loadXmlData('datasets/AffectiveText.test/affectivetext_test.xml', test_ids, test_data)
 
-if (mode == 0):
-    loadValenceLabelsBinary('datasets/AffectiveText.trial/affectivetext_trial.valence.gold', valence_training_labels)
-    loadValenceLabelsBinary('datasets/AffectiveText.test/affectivetext_test.valence.gold', valence_test_labels)
-    print('================================================================= Sentiment analysis (binary) =================================================================')
-    classify(training_data, test_data, valence_training_labels, valence_test_labels)
-elif (mode == 1):
-    loadValenceLabelsTriple('datasets/AffectiveText.trial/affectivetext_trial.valence.gold', valence_training_labels)
-    loadValenceLabelsTriple('datasets/AffectiveText.test/affectivetext_test.valence.gold', valence_test_labels)
-    print('================================================================= Sentiment analysis (triple) =================================================================')
-    classify(training_data, test_data, valence_training_labels, valence_test_labels)
-else:
-    print('==================================================================== Emotions recognition =====================================================================')
-    loadEmotionsLabelsTraining('datasets/AffectiveText.trial/affectivetext_trial.emotions.gold')
-    loadEmotionsLabelsTest('datasets/AffectiveText.test/affectivetext_test.emotions.gold')
-    print("=============================================================")
-    print("=========================== Anger ===========================")
-    print("=============================================================")
-    classify(training_data, test_data, training_anger_labels, test_anger_labels)
+#Valence binary (positive and negative)
+loadValenceLabelsBinary('datasets/AffectiveText.trial/affectivetext_trial.valence.gold', valence_training_labels)
+loadValenceLabelsBinary('datasets/AffectiveText.test/affectivetext_test.valence.gold', valence_test_labels)
+print('================================================================= Sentiment analysis (binary) =================================================================')
+classify(training_data, test_data, valence_training_labels, valence_test_labels)
 
-    print("=============================================================")
-    print("=========================== Disgust =========================")
-    print("=============================================================")
-    classify(training_data, test_data, training_disgust_labels, test_disgust_labels)
+#Valence triple (positive, negative and neutral)
+loadValenceLabelsTriple('datasets/AffectiveText.trial/affectivetext_trial.valence.gold', valence_triple_training_labels)
+loadValenceLabelsTriple('datasets/AffectiveText.test/affectivetext_test.valence.gold', valence_triple_test_labels)
+print('================================================================= Sentiment analysis (triple) =================================================================')
+classify(training_data, test_data, valence_triple_training_labels, valence_triple_test_labels)
 
-    print("=============================================================")
-    print("=========================== Fear =========================")
-    print("=============================================================")
-    classify(training_data, test_data, training_fear_labels, test_fear_labels)
+#Emotions recognition
+print('==================================================================== Emotions recognition =====================================================================')
+loadEmotionsLabelsTraining('datasets/AffectiveText.trial/affectivetext_trial.emotions.gold')
+loadEmotionsLabelsTest('datasets/AffectiveText.test/affectivetext_test.emotions.gold')
+print("=============================================================")
+print("=========================== Anger ===========================")
+print("=============================================================")
+classify(training_data, test_data, training_anger_labels, test_anger_labels)
 
-    print("=============================================================")
-    print("=========================== Joy =========================")
-    print("=============================================================")
-    classify(training_data, test_data, training_joy_labels, test_joy_labels)
+print("=============================================================")
+print("=========================== Disgust =========================")
+print("=============================================================")
+classify(training_data, test_data, training_disgust_labels, test_disgust_labels)
 
-    print("=============================================================")
-    print("=========================== Sadness =========================")
-    print("=============================================================")
-    classify(training_data, test_data, training_sadness_labels, test_sadness_labels)
+print("=============================================================")
+print("=========================== Fear =========================")
+print("=============================================================")
+classify(training_data, test_data, training_fear_labels, test_fear_labels)
 
-    print("=============================================================")
-    print("=========================== Surprise =========================")
-    print("=============================================================")
-    classify(training_data, test_data, training_surprise_labels, test_surprise_labels)
+print("=============================================================")
+print("=========================== Joy =========================")
+print("=============================================================")
+classify(training_data, test_data, training_joy_labels, test_joy_labels)
+
+print("=============================================================")
+print("=========================== Sadness =========================")
+print("=============================================================")
+classify(training_data, test_data, training_sadness_labels, test_sadness_labels)
+
+print("=============================================================")
+print("=========================== Surprise =========================")
+print("=============================================================")
+classify(training_data, test_data, training_surprise_labels, test_surprise_labels)
+
+writeEmotionsResultFile(test_ids, "results/test-emotions.gold")
+writeValenceResultFile(test_ids, "results/test-valence.gold", valence_test_labels)
+writeValenceResultFile(test_ids, "results/test-valence-triple.gold", valence_triple_test_labels)

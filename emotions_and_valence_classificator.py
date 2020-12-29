@@ -50,7 +50,6 @@ def load_datasets_emotions():
     #read sadness words
     sadness_words = load_data('datasets/WordNetAffectEmotionLists/sadnessSynonyms.txt') 
     
-
     #read surprise words
     surprise_words = load_data('datasets/WordNetAffectEmotionLists/surpriseSynonyms.txt')
 
@@ -58,16 +57,14 @@ def load_datasets_sentiments():
     global negative_words
     global positive_words
     #read negative words
-    negative_words= load_data('datasets/sentimentwords/negative.txt') 
+    negative_words= load_data('datasets/SentimentWords/negative.txt') 
 
     #read positive words
-    positive_words= load_data('datasets/sentimentwords/positive.txt')
+    positive_words= load_data('datasets/SentimentWords/positive.txt')
 
 def load_all_data():
     load_datasets_emotions()
     load_datasets_sentiments()
-
-
 
 #============================Process phrases============================
 def binaryResult(value, limit):
@@ -97,16 +94,9 @@ def processPhraseValence(phrase):
     pourcentagePos = positive_count*100/len(words)
     pourcentageNeu = 100 - pourcentageNeg - pourcentagePos
 
-    if pourcentagePos  >pourcentageNeg   :
+    if pourcentagePos > pourcentageNeg:
         return "1"
     return "-1"
-    
-
- 
-
-        
-        
-
 
 #return a string with 0 or 1 in format: anger disgust fear joy sadness surprise
 def processPhraseEmotions(phrase):
@@ -169,4 +159,3 @@ loadXmlData('datasets/AffectiveText.test/affectivetext_test.xml', test_data)
 
 processData(training_data, 'results/trial-emotions.gold', 'results/trial-valence.gold')
 processData(test_data, 'results/test-emotions.gold', 'results/test-valence.gold')
-
