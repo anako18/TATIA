@@ -98,7 +98,6 @@ def compaireValenceFiles(file1,file2):
     print("in file "+file2 +" erreur  is "+ str(pourcentageErreur) +" % and correct is "+ str(pourcentageCorrect) +"% nb of erreurs "+str(erreur) + " / " + str(int(len(result1)/2)))
     
 
-compaireValenceFiles(fileTrial,resultTrial)  
 compaireValenceFiles(fileTest,resultTest)  
 
 
@@ -129,7 +128,14 @@ def compaireEmotionFiles(file1,file2):
         
 
 
-compaireEmotionFiles(fileemotionTrial,emotionTrialResult)    
 
 compaireEmotionFiles(fileemotionTest,emotionTestResult)
 
+resultTestValenceNaive = "datasets/AffectiveText.test/Naive_Bayes_valence.gold"
+
+compaireValenceFiles(fileTest,resultTestValenceNaive)  
+
+resultTestEmotionNaive = "datasets/AffectiveText.test/Naive_Bayes_emotions.gold"
+fileTestEmtion = "datasets/AffectiveText.test/emotions.gold"
+
+compaireEmotionFiles(fileTestEmtion,resultTestEmotionNaive)
