@@ -43,10 +43,10 @@ def compareValenceClassificationReport(testFilePath, resultFilePath, triple = 0)
             errorsCount+=1
         test_labels.append(testValenceValue)
         result_labels.append(resultValenceValue)
-    """
+    
     print(confusion_matrix(test_labels,result_labels))
     print(classification_report(test_labels, result_labels))
-    """
+    
     correctAnswersPercent = 100 - errorsCount*100/total
     print("Total samples: {}, total errors count: {}, correct answers percentage: {}%".format(total, errorsCount, correctAnswersPercent))
 
@@ -97,45 +97,54 @@ def compaireEmotionClassificationReport(testFilePath, resultFilePath):
                 errorsCount+=1
             test_labels[key].append(testEmotionValue)
             result_labels[key].append(resultEmotionValue)
-    """
+    
     for key, value in emotions.items():
         print("================================== " + value + " ==================================")
         print(confusion_matrix(test_labels[key], result_labels[key]))
         print(classification_report(test_labels[key], result_labels[key]))
-    """
+    
     correctAnswersPercent = 100 - errorsCount*100/total
     print("Total samples: {}, total errors count: {}, correct answers percentage: {}%".format(total, errorsCount, correctAnswersPercent))
     
 valenceFile = "datasets/AffectiveText.test/affectivetext_test.valence.gold"
 emotionFile = "datasets/AffectiveText.test/affectivetext_test.emotions.gold"
 
-valence_NaiveBayes = "results/test-valence_NaiveBayes.gold"
-valence_RuleBased = "results/test-valence_RuleBased.gold"
+valence_SVM_result_file = 'results/test_valence_SVM.gold'
+valence_triple_SVM_result_file = 'results/test_triple_valence_SVM.gold'
 
-emotions_NaiveBayes = "results/test-emotions_NaiveBayes.gold"
-emotions_RuleBased = "results/test-emotions_RuleBased.gold"    
-    
-    
-print("================================================ SVM ==========================================================")
+valence_NaiveBayes_result_file = "results/test_valence_Naive_Bayes.gold"
+valence_RuleBased_result_file = "results/test_valence_rule_based.gold"
+valence_triple_RuleBased_result_file = "results/test_triple_valence_rule_based.gold"
+
+emotions_SVM_result_file = 'results/test_emotions_SVM.gold'
+emotions_NaiveBayes_result_file = "results/test_emotions_Naive_Bayes.gold"
+emotions_RuleBased_result_file = "results/test_emotions_rule_based.gold"
+print("===============================================================================================================")
+print("============================================== Rules Based ====================================================")
+print("===============================================================================================================")
 print("====================================== Valence binary =============================================")
-compareValenceClassificationReport(valenceFile, 'results/test-valence_SVM.gold')
+compareValenceClassificationReport(valenceFile, valence_RuleBased_result_file)
 print("====================================== Valence triple =============================================")
-compareValenceClassificationReport(valenceFile, 'results/test-valence-triple_SVM.gold', 1)
-print("================================================ Emotions ==========================================================")
-compaireEmotionClassificationReport(emotionFile,'results/test-emotions_SVM.gold')
+compareValenceClassificationReport(valenceFile, valence_triple_RuleBased_result_file, 1)
+print("======================================== Emotions =================================================")
+compaireEmotionClassificationReport(emotionFile, emotions_RuleBased_result_file)
 
-
-
-print("================================================ Rules Based ==========================================================")
+print("\n===============================================================================================================")
+print("================================================ SVM ==========================================================")
+print("===============================================================================================================")
+print("====================================== Valence binary =============================================")
+compareValenceClassificationReport(valenceFile, valence_SVM_result_file)
 print("====================================== Valence triple =============================================")
-compareValenceClassificationReport(valenceFile, valence_RuleBased)
-print("================================================ Emotions ==========================================================")
-compaireEmotionClassificationReport(emotionFile,emotions_RuleBased)
+compareValenceClassificationReport(valenceFile, valence_triple_SVM_result_file, 1)
+print("======================================== Emotions =================================================")
+compaireEmotionClassificationReport(emotionFile, emotions_SVM_result_file)
 
 
-print("================================================ Naive Bayes ==========================================================")
-print("====================================== Valence triple =============================================")
-compareValenceClassificationReport(valenceFile, valence_NaiveBayes)
-print("================================================ Emotions ==========================================================")
-compaireEmotionClassificationReport(emotionFile,emotions_NaiveBayes)
+print("\n===============================================================================================================")
+print("============================================= Naive Bayes =======================================================")
+print("=================================================================================================================")
+print("================================= Valence triple ========================================")
+compareValenceClassificationReport(valenceFile, valence_NaiveBayes_result_file)
+print("===================================== Emotions ==========================================")
+compaireEmotionClassificationReport(emotionFile, emotions_NaiveBayes_result_file)
 

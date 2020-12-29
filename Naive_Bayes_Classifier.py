@@ -427,8 +427,8 @@ training(training_data)
 
 loadXmlData('datasets/AffectiveText.test/affectivetext_test.xml', test_data)
 
-outputfileTestEmotion = "results/test-emotions_NaiveBayes.gold"
+outputfileTestEmotion = "results/test_emotions_Naive_Bayes.gold"
 
-outputfileTestValence = "results/test-valence_NaiveBayes.gold"
+outputfileTestValence = "results/test_valence_Naive_Bayes.gold"
 
 processTest(test_data,outputfileTestValence,outputfileTestEmotion)        
