@@ -20,7 +20,7 @@ stop_words = set(stopwords.words('english'))
 lemmatizer = WordNetLemmatizer()
 
 emotions_threshold = 30
-sentiments_threshold = 20
+valence_threshold = 20
 
 training_data = []
 training_ids = []
@@ -128,7 +128,7 @@ def loadValenceLabelsTriple(labelsFilePath, labels):
     f = open(labelsFilePath, 'r')
     file_labels = f.readlines()
     for label in file_labels:
-        labels.append(getLabelTriple(int(label.split()[1]), sentiments_threshold))
+        labels.append(getLabelTriple(int(label.split()[1]), valence_threshold))
 
 
 #Load test labels for all emotions
@@ -231,27 +231,38 @@ def classify(training_data, test_data, training_labels, test_labels):
     print("=========================== LinearSVC ===========================")
     print(confusion_matrix(test_labels, prediction_liblinear))
     print(classification_report(test_labels, prediction_liblinear))
-        
+
+    
+valence_test_file = "datasets/AffectiveText.test/affectivetext_test.valence.gold"
+emotions_test_file = "datasets/AffectiveText.test/affectivetext_test.emotions.gold"
+
+valence_trial_file = "datasets/AffectiveText.trial/affectivetext_trial.valence.gold"
+emotions_trial_file = "datasets/AffectiveText.trial/affectivetext_trial.emotions.gold"
+
+valence_SVM_result_file = 'results/test_valence_SVM.gold'
+valence_triple_SVM_result_file = 'results/test_triple_valence_SVM.gold'
+emotions_SVM_result_file = 'results/test_emotions_SVM.gold'
+
 #Load common training and testing data
 loadXmlData('datasets/AffectiveText.trial/affectivetext_trial.xml', training_ids, training_data)
 loadXmlData('datasets/AffectiveText.test/affectivetext_test.xml', test_ids, test_data)
 
 #Valence binary (positive and negative)
 loadValenceLabelsBinary('datasets/AffectiveText.trial/affectivetext_trial.valence.gold', valence_training_labels)
-loadValenceLabelsBinary('datasets/AffectiveText.test/affectivetext_test.valence.gold', valence_test_labels)
+loadValenceLabelsBinary(valence_test_file, valence_test_labels)
 print('================================================================= Sentiment analysis (binary) =================================================================')
 classify(training_data, test_data, valence_training_labels, valence_test_labels)
 
 #Valence triple (positive, negative and neutral)
-loadValenceLabelsTriple('datasets/AffectiveText.trial/affectivetext_trial.valence.gold', valence_triple_training_labels)
-loadValenceLabelsTriple('datasets/AffectiveText.test/affectivetext_test.valence.gold', valence_triple_test_labels)
+loadValenceLabelsTriple(valence_trial_file, valence_triple_training_labels)
+loadValenceLabelsTriple(valence_test_file, valence_triple_test_labels)
 print('================================================================= Sentiment analysis (triple) =================================================================')
 classify(training_data, test_data, valence_triple_training_labels, valence_triple_test_labels)
 
 #Emotions recognition
 print('==================================================================== Emotions recognition =====================================================================')
-loadEmotionsLabelsTraining('datasets/AffectiveText.trial/affectivetext_trial.emotions.gold')
-loadEmotionsLabelsTest('datasets/AffectiveText.test/affectivetext_test.emotions.gold')
+loadEmotionsLabelsTraining(emotions_trial_file)
+loadEmotionsLabelsTest(emotions_test_file)
 print("=============================================================")
 print("=========================== Anger ===========================")
 print("=============================================================")
@@ -282,6 +293,6 @@ print("=========================== Surprise =========================")
 print("=============================================================")
 classify(training_data, test_data, training_surprise_labels, test_surprise_labels)
 
-writeEmotionsResultFile(test_ids, "results/test-emotions_SVM.gold")
-writeValenceResultFile(test_ids, "results/test-valence_SVM.gold", valence_test_labels)
-writeValenceResultFile(test_ids, "results/test-valence-triple_SVM.gold", valence_triple_test_labels)
+writeEmotionsResultFile(test_ids, emotions_SVM_result_file)
+writeValenceResultFile(test_ids, valence_SVM_result_file, valence_test_labels)
+writeValenceResultFile(test_ids, valence_triple_SVM_result_file, valence_triple_test_labels)

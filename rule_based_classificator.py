@@ -4,8 +4,10 @@ import xml.dom.minidom
 from xml.dom import minidom
 import string
 
+emotions_threshold = 20
+valence_threshold = 30
+
 #list of phrases with ids
-training_data = {}
 test_data = {}
 
 #emotions words
@@ -67,8 +69,10 @@ def load_all_data():
     load_datasets_sentiments()
 
 #============================Process phrases============================
-def binaryResult(value, limit):
-    if value < limit:
+#if value > threshold then emotion exists
+#threshold is in range [0, 100]
+def binaryResult(value, threshold):
+    if value < threshold:
         return "0"
     else:
         return "1"
@@ -78,7 +82,7 @@ def preprocessPhrase(phrase):
     phrase = phrase.translate(str.maketrans('', '', string.punctuation)) #remove punctuation signs
     return phrase
 
-#return -1 if negative 0 if neutral and 1 if positive
+#0 if negative and 1 if positive
 def processPhraseValence(phrase):
     negative_count = 0
     positive_count = 0
@@ -89,14 +93,27 @@ def processPhraseValence(phrase):
             positive_count += 1
         elif word_lemmatized in negative_words or word in negative_words:
             negative_count += 1
-
-    pourcentageNeg = negative_count*100/len(words)
-    pourcentagePos = positive_count*100/len(words)
-    pourcentageNeu = 100 - pourcentageNeg - pourcentagePos
-
-    if pourcentagePos > pourcentageNeg:
+    if positive_count > negative_count:
         return "1"
     return "0"
+
+#-1 if negative, 0 if neutral and 1 if positive
+def processPhraseValenceTriple(phrase):
+    negative_count = 0
+    positive_count = 0
+    words = nltk.word_tokenize(phrase)
+    for word in words:
+        word_lemmatized = lemmatizer.lemmatize(word)
+        if word_lemmatized in positive_words or word in positive_words:
+            positive_count += 1
+        elif word_lemmatized in negative_words or word in negative_words:
+            negative_count += 1
+    if positive_count > negative_count:
+        return "1"
+    elif positive_count < negative_count:
+        return "-1"
+    else:
+        return "0"
 
 #return a string with 0 or 1 in format: anger disgust fear joy sadness surprise
 def processPhraseEmotions(phrase):
@@ -135,14 +152,21 @@ def processPhraseEmotions(phrase):
     )
 
 #============================Load data for training and for testing============================
-def processData(data, outputFilePathEmotions, outputFilePathValence):
+def writeEmotionsResultFile(data, outputFilePathEmotions):
     fileEmotions = open(outputFilePathEmotions, 'w+')
+    for id, phrase in data.items():
+        phrase = preprocessPhrase(phrase)
+        fileEmotions.write('{} {}\n'.format(id, processPhraseEmotions(phrase)))
+    fileEmotions.close()
+
+def writeValenceResultFile(data, outputFilePathValence, triple = 0):
     fileValence = open(outputFilePathValence, 'w+')
     for id, phrase in data.items():
         phrase = preprocessPhrase(phrase)
-        fileValence.write('{} {}\n'.format(id, processPhraseValence(phrase)))
-        fileEmotions.write('{} {}\n'.format(id, processPhraseEmotions(phrase)))
-    fileEmotions.close()
+        if triple == 0:
+            fileValence.write('{} {}\n'.format(id, processPhraseValence(phrase)))
+        else:
+            fileValence.write('{} {}\n'.format(id, processPhraseValenceTriple(phrase)))
     fileValence.close()
 
 def loadXmlData(xmlFilePath, data):
@@ -153,9 +177,12 @@ def loadXmlData(xmlFilePath, data):
 
 load_all_data()
 
-
-loadXmlData('datasets/AffectiveText.trial/affectivetext_trial.xml', training_data)
 loadXmlData('datasets/AffectiveText.test/affectivetext_test.xml', test_data)
 
-#processData(training_data, 'results/trial-emotions.gold', 'results/trial-valence.gold')
-processData(test_data, 'results/test-emotions_RuleBased.gold', 'results/test-valence_RuleBased.gold')
+valence_RuleBased_result_file = "results/test_valence_rule_based.gold"
+valence_triple_RuleBased_result_file = "results/test_triple_valence_rule_based.gold"
+emotions_RuleBased_result_file = "results/test_emotions_rule_based.gold"
+
+writeEmotionsResultFile(test_data, emotions_RuleBased_result_file)
+writeValenceResultFile(test_data, valence_RuleBased_result_file)
+writeValenceResultFile(test_data, valence_triple_RuleBased_result_file, 1)

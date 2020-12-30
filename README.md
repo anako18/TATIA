@@ -1,12 +1,25 @@
-# TATIA
-Sentiment analysis and emotions recognition
-# 1- Sentiment analysis with strict classification (each word is either positive or negative). As a result, the program will indicate the sentiment of the text (positive or negative) giving the percentage of negativity and positivity
-Datasets:  Sentiment Lexicons for 81 Languages | Kaggle 
-Sentiment words | Kaggle
+# TATIA project: Sentiment analysis and emotions recognition
+Test and training datas: https://web.eecs.umich.edu/~mihalcea/affectivetext/
 
+# Classificators for the following problems:
 
-# 2- Emotions recognition with strict classification (each word has only one emotion). As a result, the program will indicate the emotion of the text ( Disgust, Surprise, Anger, Sad, Happy and Fear).
+### 1 - Binary sentiment analysis (determines if the text sample is positive or negative)
+Datatset: https://www.kaggle.com/harshaiitj08/positive-and-negative-words
+
+### 2 - Ternary sentiment analysis (determines if the text sample is positive, negative or neutral)
+Datatset: https://www.kaggle.com/harshaiitj08/positive-and-negative-words
+
+### 3- Emotions recognition (determines if each of the six basic emotions (anger disgust fear joy sadness surprise)
 Datatset: https://web.eecs.umich.edu/~mihalcea/affectivetext/
 
-# 3- Emotions recognition with coefficient classification (each word has different emotions, each one to a certain extent). As a result, the program will indicate emotions with their percentages (Disgust, Surprise, Anger, Sad, Happy and Fear).
-Dataset: Emotions Sensor Data Set | Kaggle
+# Implemented systems:
+
+* Rule-based system
+* Naive Bayes classificator
+* SVC with rbf kernel
+* SVC with polynomial kernel
+* SVC with sigmoid kernel
+* SVC with linear kernel
+* LinearSVC
+
+Contributors: Meryem BOUFALAH and Anastasiia KOZLOVA
