@@ -5,7 +5,7 @@ from xml.dom import minidom
 import string
 import csv
 
-limit = 10
+limit = 20
 
 def preprocessPhrase(phrase):
     phrase = phrase.replace('\n', '')
@@ -69,52 +69,24 @@ def convertEmotionFile(file1,file2):
 results =  dict()
 
 def convert_csvValence_to_dict(file):
-    global results
+    results = dict()
     f = open(file, 'r')
     reader = csv.reader(f)
     f.close
     for row in reader:
-        
         results.update({row[0] : int(row[1])})
+    return results
         
 def convert_csvEmotions_to_dict(file):
-    global results
+    results = dict()
     f = open(file, 'r')
     reader = csv.reader(f)
     f.close
     for row in reader:
-        
         results.update({row[0] : { "anger" : int(row[1]) , "disgust" : int(row[2]) ,"fear" : int(row[3]), "joy": int(row[4]) ,"sadness": int(row[5]),"surprise": int(row[6])}})
 
-
-
-#print(results.get("1").get("disgust"))
-occWords = dict() 
-proba_anger = 0
-proba_anger_word = dict()
-words_in_anger_phrase = dict()
-
-proba_disgust = 0
-proba_disgust_word = dict()
-words_in_disgust_phrase = dict()
-
-proba_fear = 0
-proba_fear_word = dict()
-words_in_fear_phrase = dict()
-
-proba_joy = 0
-proba_joy_word = dict()
-words_in_joy_phrase = dict()
-
-proba_sad = 0
-proba_sad_word = dict()
-words_in_sad_phrase = dict()
-
-proba_surprise = 0
-proba_surprise_word = dict()
-words_in_surprise_phrase = dict()
-
-
+    return results
+    
 def addValue(my_dic,word, exist):
     if my_dic.get(word) == None:
         my_dic.update({word : 0})  
@@ -122,106 +94,252 @@ def addValue(my_dic,word, exist):
     if exist == 1:
         value = my_dic.get(word) +1
         my_dic.update({word : value})
+        
+def addValueEmotion(my_dic1,my_dic2,word, exist):
+    if my_dic1.get(word) == None:
+        my_dic1.update({word : 0})
+    if my_dic2.get(word) == None:
+        my_dic2.update({word : 0}) 
 
+    if exist == 1:
+        value = my_dic1.get(word) +1 
+        my_dic1.update({word : value})
+    else :
+        value = my_dic2.get(word) +1 
+        my_dic2.update({word : value})
+        
+
+occWords = dict() 
+proba_anger = 0
+proba_Notanger = 0
+
+proba_word_anger = dict()
+proba_word_Notanger = dict()
+
+words_in_anger_phrase = dict()
+words_in_Notanger_phrase = dict()
+
+proba_disgust = 0
+proba_Notdisgust = 0
+
+proba_word_disgust = dict()
+proba_word_Notdisgust = dict()
+
+words_in_disgust_phrase = dict()
+words_in_Notdisgust_phrase = dict()
+
+proba_fear = 0
+proba_Notfear = 0
+
+proba_word_fear = dict()
+proba_word_Notfear = dict()
+
+words_in_fear_phrase = dict()
+words_in_Notfear_phrase = dict()
+
+proba_joy = 0
+proba_Notjoy = 0
+
+proba_word_joy = dict()
+proba_word_Notjoy = dict()
+
+words_in_joy_phrase = dict()
+words_in_Notjoy_phrase = dict()
+
+proba_sad = 0
+proba_Notsad = 0
+
+proba_word_sad = dict()
+proba_word_Notsad = dict()
+
+words_in_sad_phrase = dict()
+words_in_Notsad_phrase = dict()
+
+
+
+proba_surprise = 0
+proba_Notsurprise = 0
+proba_word_surprise = dict()
+proba_word_Notsurprise = dict()
+
+
+words_in_surprise_phrase = dict()
+words_in_Notsurprise_phrase = dict()
+
+
+
+def proba_word_emotion(words_in_emotion_phrase,proba_emotion, word):
+    global occWords
+    if words_in_emotion_phrase.get(word) != None:
+        proba  = words_in_emotion_phrase.get(word) / occWords.get(word)
+        proba_emotion.update({word : proba})  
+    else :
+        proba_emotion.update({word : 0.001})   # to avoid 0 
+
+        
     
 
-def trainingEmotion(data):
+def trainingEmotion(data,results):
     global occWords
     global proba_anger
-    global proba_anger_word
+    global proba_Notanger
+    
+    global proba_word_anger
     global words_in_anger_phrase
-
+    
+    global proba_word_Notanger
+    global words_in_Notanger_phrase
+    
     global proba_disgust
-    global proba_disgust_word
-    global words_in_disgust_phrase
+    global proba_Notdisgust
 
+    global proba_word_disgust
+    global words_in_disgust_phrase
+    
+    global proba_word_Notdisgust
+    global words_in_Notdisgust_phrase
+    
     global proba_fear
-    global proba_fear_word
+    global proba_Notfear
+    
+    global proba_word_fear
     global words_in_fear_phrase
+    
+    global proba_word_Notfear
+    global words_in_Notfear_phrase
 
     global proba_joy
-    global proba_joy_word
+    global proba_Notjoy
+    
+    global proba_word_joy
     global words_in_joy_phrase
+    
+    global proba_word_Notjoy
+    global words_in_Notjoy_phrase
+
 
     global proba_sad
-    global proba_sad_word
+    global proba_Notsad
+    
+    global proba_word_sad
     global words_in_sad_phrase
-
+    
+    global proba_word_Notsad
+    global words_in_Notsad_phrase
+    
     global proba_surprise
-    global proba_surprise_word
+    global proba_Notsurprise
+    
+    global proba_word_surprise
     global words_in_surprise_phrase
     
-    result_anger = 0
-    result_disgust = 0
-    result_fear = 0
-    result_joy = 0
-    result_sad = 0
-    result_surprise = 0
+    global proba_word_Notsurprise
+    global words_in_Notsurprise_phrase
+    
+    occ_anger = 0
+    occ_disgust = 0
+    occ_fear = 0
+    occ_joy = 0
+    occ_sad = 0
+    occ_surprise = 0
+    occ_Notanger = 0
+    occ_Notdisgust = 0
+    occ_Notfear = 0
+    occ_Notjoy = 0
+    occ_Notsad = 0
+    occ_Notsurprise = 0
+    
     for id, phrase in data.items():
         phrase = preprocessPhrase(phrase)
         words = nltk.word_tokenize(phrase)
         for word in words:
             word = lemmatizer.lemmatize(word)
-            value = occWords.get(word)
-            if value != None:
-                value +=1
-            else:
-                value = 1
-            occWords.update({word : value})
-            addValue(words_in_anger_phrase,word,results.get(id).get("anger"))
-            addValue(words_in_disgust_phrase,word,results.get(id).get("disgust"))
-            addValue(words_in_fear_phrase,word,results.get(id).get("fear"))
-            addValue(words_in_joy_phrase,word,results.get(id).get("joy"))
-            addValue(words_in_sad_phrase,word,results.get(id).get("sadness"))
-            addValue(words_in_surprise_phrase,word,results.get(id).get("surprise"))
+            addValue(occWords,word,1)
+            
+            addValueEmotion(words_in_anger_phrase,words_in_Notanger_phrase,word,results.get(id).get("anger"))
+            addValueEmotion(words_in_disgust_phrase,words_in_Notdisgust_phrase,word,results.get(id).get("disgust"))
+            addValueEmotion(words_in_fear_phrase,words_in_Notfear_phrase,word,results.get(id).get("fear"))
+            addValueEmotion(words_in_joy_phrase,words_in_Notjoy_phrase,word,results.get(id).get("joy"))
+            addValueEmotion(words_in_sad_phrase,words_in_Notsad_phrase,word,results.get(id).get("sadness"))
+            addValueEmotion(words_in_surprise_phrase,words_in_Notsurprise_phrase,word,results.get(id).get("surprise"))
 
                 
         if results.get(id).get("anger") == 1:  
-            result_anger +=1
+            occ_anger +=1
+        else:
+            occ_Notanger +=1
+            
         if results.get(id).get("disgust") == 1:  
-            result_disgust +=1
+            occ_disgust +=1
+        else:
+            occ_Notdisgust +=1
+            
         if results.get(id).get("fear") == 1:  
-            result_fear +=1
+            occ_fear +=1
+        else:
+            occ_Notfear +=1
+            
         if results.get(id).get("joy") == 1:  
-            result_joy +=1
+            occ_joy +=1
+        else:
+            occ_Notjoy +=1
+            
         if results.get(id).get("sadness") == 1:  
-            result_sad +=1
+            occ_sad +=1
+        else:
+            occ_Notsad +=1
+            
         if results.get(id).get("surprise") == 1:  
-            result_surprise +=1
-        
+            occ_surprise +=1
+        else:
+            occ_Notsurprise +=1
+            
+    # proba word givin emotion P(word/emotion)
     for key in occWords:
-        proba  = words_in_anger_phrase.get(key) / occWords.get(key)
-        proba_anger_word.update({key : proba})  
+        proba_word_emotion(words_in_anger_phrase,proba_word_anger,key)    
+        proba_word_emotion(words_in_Notanger_phrase,proba_word_Notanger,key)    
         
-        proba  = words_in_disgust_phrase.get(key) / occWords.get(key)
-        proba_disgust_word.update({key : proba})  
+        proba_word_emotion(words_in_disgust_phrase,proba_word_disgust,key)   
+        proba_word_emotion(words_in_Notdisgust_phrase,proba_word_Notdisgust,key)   
         
-        proba  = words_in_fear_phrase.get(key) / occWords.get(key)
-        proba_fear_word.update({key : proba})   
+        proba_word_emotion(words_in_fear_phrase,proba_word_fear,key)  
         
-        proba  = words_in_joy_phrase.get(key) / occWords.get(key)
-        proba_joy_word.update({key : proba})   
-        
-        proba  = words_in_sad_phrase.get(key) / occWords.get(key)
-        proba_sad_word.update({key : proba})   
-        
-        proba  = words_in_surprise_phrase.get(key) / occWords.get(key)
-        proba_surprise_word.update({key : proba})    
-        
-    proba_anger  = result_anger / len(data.items())        
-    proba_disgust  = result_disgust / len(data.items())        
-    proba_fear  = result_fear / len(data.items())        
-    proba_joy  = result_joy / len(data.items())        
-    proba_sad  = result_sad / len(data.items())        
-    proba_surprise  = result_surprise / len(data.items())        
+        proba_word_emotion(words_in_joy_phrase,proba_word_joy,key)    
 
-def calculateProba(words, dic , probabity):
+        proba_word_emotion(words_in_sad_phrase,proba_word_sad,key)    
+
+        proba_word_emotion(words_in_surprise_phrase,proba_word_surprise,key)     
+        
+        proba_word_emotion(words_in_Notfear_phrase,proba_word_Notfear,key)  
+        
+        proba_word_emotion(words_in_Notjoy_phrase,proba_word_Notjoy,key)    
+
+        proba_word_emotion(words_in_Notsad_phrase,proba_word_Notsad,key)    
+
+        proba_word_emotion(words_in_Notsurprise_phrase,proba_word_Notsurprise,key)    
+        
+    ### probabilie des emotions P(emotion)
+    proba_anger  = occ_anger / len(data.items())        
+    proba_disgust  = occ_disgust / len(data.items())        
+    proba_fear  = occ_fear / len(data.items())        
+    proba_joy  = occ_joy / len(data.items())        
+    proba_sad  = occ_sad / len(data.items())        
+    proba_surprise  = occ_surprise / len(data.items())     
+    proba_Notanger  = occ_Notanger / len(data.items())        
+    proba_Notdisgust  = occ_Notdisgust / len(data.items())        
+    proba_Notfear  = occ_Notfear / len(data.items())        
+    proba_Notjoy  = occ_Notjoy / len(data.items())        
+    proba_Notsad  = occ_Notsad / len(data.items())        
+    proba_Notsurprise  = occ_Notsurprise / len(data.items())   
+    
+
+def calculateProbaBayes(words, dic , probabity):
     proba = probabity
     for word in words:
         word = lemmatizer.lemmatize(word)
         value = dic.get(word) 
         if value == None or value == 0:
-            value = 0.001
+            value = 0.1
         proba = proba * value
         
     # device by some thing
@@ -230,55 +348,69 @@ def calculateProba(words, dic , probabity):
 def processPhraseEmotions(phrase):
     global occWords
     global proba_anger
-    global proba_anger_word
+    global proba_Notanger
+    global proba_word_anger
+    global proba_word_Notanger
     
     global proba_disgust
-    global proba_disgust_word
-
+    global proba_Notdisgust
+    global proba_word_disgust
+    global proba_word_Notdisgust
+    
     global proba_fear
-    global proba_fear_word
+    global proba_Notfear   
+    global proba_word_fear   
+    global proba_word_Notfear
 
     global proba_joy
-    global proba_joy_word
+    global proba_Notjoy  
+    global proba_word_joy   
+    global proba_word_Notjoy
 
     global proba_sad
-    global proba_sad_word
-
+    global proba_Notsad   
+    global proba_word_sad    
+    global proba_word_Notsad
+    
     global proba_surprise
-    global proba_surprise_word
+    global proba_Notsurprise    
+    global proba_word_surprise   
+    global proba_word_Notsurprise
     
     words = nltk.word_tokenize(phrase)
     
-    angerproba = calculateProba(words,proba_anger_word, proba_anger )
-    disgustproba = calculateProba(words,proba_disgust_word, proba_disgust )
-    fearproba = calculateProba(words,proba_fear_word, proba_fear )
-    joyproba = calculateProba(words,proba_joy_word, proba_joy )
-    sadproba = calculateProba(words,proba_sad_word, proba_sad )
-    surpriseproba = calculateProba(words,proba_surprise_word, proba_surprise)
+    angerproba = calculateProbaBayes(words,proba_word_anger, proba_anger )
+    disgustproba = calculateProbaBayes(words,proba_word_disgust, proba_disgust )
+    fearproba = calculateProbaBayes(words,proba_word_fear, proba_fear )
+    joyproba = calculateProbaBayes(words,proba_word_joy, proba_joy )
+    sadproba = calculateProbaBayes(words,proba_word_sad, proba_sad )
+    surpriseproba = calculateProbaBayes(words,proba_word_surprise, proba_surprise)
     
-    angerproba = angerproba /(angerproba+disgustproba+fearproba+joyproba+sadproba +surpriseproba)
-    disgustproba = disgustproba /(angerproba+disgustproba+fearproba+joyproba+sadproba+surpriseproba)
-    fearproba = fearproba /(angerproba+disgustproba+fearproba+joyproba+sadproba+surpriseproba)
-    joyproba = joyproba /(angerproba+disgustproba+fearproba+joyproba+sadproba+surpriseproba)
-    sadproba = sadproba /(angerproba+disgustproba+fearproba+joyproba+sadproba+surpriseproba)
-    surpriseproba = surpriseproba /(angerproba+disgustproba+fearproba+joyproba+sadproba+surpriseproba)
+    notangerproba = calculateProbaBayes(words,proba_word_Notanger, proba_Notanger )
+    notdisgustproba = calculateProbaBayes(words,proba_word_Notdisgust, proba_Notdisgust )
+    notfearproba = calculateProbaBayes(words,proba_word_Notfear, proba_Notfear )
+    notjoyproba = calculateProbaBayes(words,proba_word_Notjoy, proba_Notjoy )
+    notsadproba = calculateProbaBayes(words,proba_word_Notsad, proba_Notsad )
+    notsurpriseproba = calculateProbaBayes(words,proba_word_Notsurprise, proba_Notsurprise)    
     
-    limit = (max(angerproba,disgustproba,fearproba,joyproba,sadproba ,surpriseproba)/3)
+    
+    
+    
     return "{} {} {} {} {} {}".format(
-        binaryResult(angerproba, limit),
-        binaryResult(disgustproba, limit), 
-        binaryResult(fearproba, limit), 
-        binaryResult(joyproba, limit), 
-        binaryResult(sadproba, limit), 
-        binaryResult(surpriseproba, limit)
+        binaryResult(angerproba, notangerproba),
+        binaryResult(disgustproba, notdisgustproba), 
+        binaryResult(fearproba, notfearproba), 
+        binaryResult(joyproba, notjoyproba), 
+        binaryResult(sadproba, notsadproba), 
+        binaryResult(surpriseproba, notsurpriseproba)
     )
 
    
 
 
-results = dict()
 
 occWords = dict() 
+
 words_in_positive_phrase = dict()  
 words_in_negative_phrase = dict()   
 words_in_neutral_phrase = dict()   
@@ -290,8 +422,7 @@ proba_negative = 0
 proba_positive = 0
 proba_neutral  = 0
 
-def training(data):
-    global results
+def trainingValence(data,results):
     global occWords
     global words_in_positive_phrase 
     global words_in_negative_phrase 
@@ -302,64 +433,45 @@ def training(data):
     global proba_positive_word 
     global proba_negative_word 
     global proba_neutral_word
+    
     occWords = dict()
-    result_positive = 0
-    result_negative = 0
-    result_neutral = 0
+    occ_positive = 0
+    occ_negative = 0
+    occ_neutral = 0
     for id, phrase in data.items():
         phrase = preprocessPhrase(phrase)
         words = nltk.word_tokenize(phrase)
         polarity_phrase = results.get(str(id))
                 
         if polarity_phrase == 1:
-            result_positive += 1
+            occ_positive += 1
         if polarity_phrase == -1:
-            result_negative += 1
+            occ_negative += 1
         if polarity_phrase == 0:
-
-            result_neutral += 1
-        #print(str(id) +" "+ str(polarity_phrase))
+            occ_neutral += 1
+            
         for word in words:
             word = lemmatizer.lemmatize(word)
-            value = occWords.get(word)
-            if value != None:
-                value +=1
-            else:
-                value = 1
-            occWords.update({word : value})
-
-            if words_in_positive_phrase.get(word) == None:
-                words_in_positive_phrase.update({word : 0})
-            if words_in_negative_phrase.get(word) == None:
-                words_in_negative_phrase.update({word : 0})
-            if words_in_neutral_phrase.get(word) == None:
-                words_in_neutral_phrase.update({word : 0})
-                
+            addValue(occWords,word,1)
+                          
             if polarity_phrase == 1:
-                value = words_in_positive_phrase.get(word) +1
-                words_in_positive_phrase.update({word : value})
+                addValue(words_in_positive_phrase,word,1)
+
             if polarity_phrase == -1:
-                value = words_in_negative_phrase.get(word)+1
-                words_in_negative_phrase.update({word : value})
+                addValue(words_in_negative_phrase,word,1)
+
             if polarity_phrase == 0:
-                value = words_in_neutral_phrase.get(word)+1
-                words_in_neutral_phrase.update({word : value})
-                       
-        
+                addValue(words_in_neutral_phrase,word,1)
+
         for key in occWords:
-            proba_word  = words_in_positive_phrase.get(key) / occWords.get(key)
-            proba_positive_word.update({key : proba_word})
-            
-            proba_word  = words_in_negative_phrase.get(key) / occWords.get(key)
-            proba_negative_word.update({key : proba_word})
-            
-            proba_word  = words_in_neutral_phrase.get(key) / occWords.get(key)
-            proba_neutral_word.update({key : proba_word})     
-            #print(key  +" pos "+ str(words_in_positive_phrase.get(key))+ " " +str(proba_positive_word.get(key)) +" neg "+ str(words_in_negative_phrase.get(key)) +" "+ str(proba_negative_word.get(key))+" / "+ str(occWords.get(key))  )
+            proba_word_emotion(words_in_positive_phrase,proba_positive_word,key)
+            proba_word_emotion(words_in_negative_phrase,proba_negative_word,key)
+            proba_word_emotion(words_in_neutral_phrase,proba_neutral_word,key)
+
     
-    proba_positive = result_positive  / len(data.items()) 
-    proba_negative = result_negative / len(data.items())      
-    proba_neutral  = result_neutral / len(data.items())  
+    proba_positive = occ_positive  / len(data.items()) 
+    proba_negative = occ_negative / len(data.items())      
+    proba_neutral  = occ_neutral / len(data.items())  
 
 
 
@@ -375,21 +487,20 @@ def processPhraseValence(phrase):
     words = nltk.word_tokenize(phrase)
 
     
-    positiveproba = calculateProba(words,proba_positive_word, proba_positive )
-    negativeproba = calculateProba(words,proba_negative_word, proba_negative )
-    neutralproba = calculateProba(words,proba_neutral_word, proba_neutral )
+    positiveproba = calculateProbaBayes(words,proba_positive_word, proba_positive )
+    negativeproba = calculateProbaBayes(words,proba_negative_word, proba_negative )
+    neutralproba = calculateProbaBayes(words,proba_neutral_word, proba_neutral )
     
     positiveproba = positiveproba /(positiveproba+negativeproba+neutralproba)
     negativeproba = negativeproba /(positiveproba+negativeproba+neutralproba)
     neutralproba = neutralproba /(positiveproba+negativeproba+neutralproba)
     
-    #maximun(positiveproba, positiveproba,neutralproba)
      
-    if  negativeproba > neutralproba and  negativeproba > positiveproba :
-        return "0"
-    if positiveproba > neutralproba and  positiveproba > negativeproba:
-        return "1"
 
+    if positiveproba > neutralproba + negativeproba:
+        return "1"
+    if  negativeproba > neutralproba + positiveproba  : # neutralproba + positiveproba = notnegativeproba 
+        return "-1"
     return "0"
         
 
@@ -403,6 +514,12 @@ def processTest(data, outputFilePathValence,outputFilePathEmotion):
         fileValence.write('{} {}\n'.format(id, processPhraseValence(phrase)))
         fileEmotion.write('{} {}\n'.format(id, processPhraseEmotions(phrase)))
 
+def training(training_data,FileEmotion,FileValence):
+    valenceDict = convert_csvValence_to_dict(FileValence)
+    emotionDict = convert_csvEmotions_to_dict(FileEmotion)
+    trainingValence(training_data,valenceDict)   
+    trainingEmotion(training_data,emotionDict)
+
 
         
 training_data = {}
@@ -410,20 +527,8 @@ test_data ={}
 
 loadXmlData('datasets/AffectiveText.trial/affectivetext_trial.xml', training_data)
 
-
-fTrial = "datasets/AffectiveText.trial/affectivetext_trial.emotions.gold"
-fileTrial = "datasets/AffectiveText.trial/emotion.csv"
-        
-convertEmotionFile(fTrial,fileTrial)   
-convert_csvEmotions_to_dict(fileTrial)
-trainingEmotion(training_data)
-
-fTrial = "datasets/AffectiveText.trial/affectivetext_trial.valence.gold"
-fileTrial = "datasets/AffectiveText.trial/valence.csv"
-        
-convertValenceFile(fTrial,fileTrial)   
-convert_csvValence_to_dict(fileTrial)
-training(training_data)   
+training(training_data,"datasets/AffectiveText.trial/emotion.csv","datasets/AffectiveText.trial/valence.csv")
+ 
 
 loadXmlData('datasets/AffectiveText.test/affectivetext_test.xml', test_data)
 
