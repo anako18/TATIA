@@ -5,8 +5,10 @@ from xml.dom import minidom
 import string
 import csv
 
-limit = 20
 
+
+threshold_emotions = 20
+threshold_valence = 30
 def preprocessPhrase(phrase):
     phrase = phrase.replace('\n', '')
     phrase = phrase.translate(str.maketrans('', '', string.punctuation)) #remove punctuation signs
@@ -17,6 +19,14 @@ def binaryResult(value, limit):
         return "0"
     else:
         return "1"
+        
+def tripleResult(value, threshold):
+    if (value >= threshold):
+        return "1"
+    elif (value < threshold) and (value > -1*threshold):
+        return "0"
+    else:
+        return "-1"
 
 lemmatizer = WordNetLemmatizer()
 
@@ -28,28 +38,29 @@ def loadXmlData(xmlFilePath, data):
         
 
 
-def convertValenceFile(file1, file2):
+def convertValenceFiles(file1,file2, file3):
     result = []
     lenth = 0
+    global threshold_valence
     f = open(file1, 'r') 
     result = [int(word) for line in f for word in line.split()]
     f.close()
-    file = open(file2, 'w')
+    fileBinary = open(file2, 'w')
+    fileTriple = open(file3, 'w')
     i = 0
     while i < len(result):
         value = result[i+1]
         index = result[i]
-        if value > 0:
-            file.write(str(index) +", 1\n")
-        else:
-            file.write(str(index) +", 0\n")
-        lenth +=1
+        fileBinary.write(str(index) +","+ binaryResult(value,threshold_valence)+"\n")
+        fileTriple.write(str(index)+"," +tripleResult(value, threshold_valence)+"\n")
         i+=2
-    file.close()
+    fileBinary.close()
+    fileTriple.close()
     
+   
 def convertEmotionFile(file1,file2):
     global lines
-    global limit 
+    global  threshold_emotions
     f = open(file1, 'r') 
     lines = [line for line in f]
     f.close()
@@ -59,7 +70,7 @@ def convertEmotionFile(file1,file2):
         i = 1
         f.write( str(result[0]))
         while i < len(result):
-           f.write( ","+ binaryResult(result[i],limit) )
+           f.write( ","+ binaryResult(result[i],threshold_emotions) )
            i+=1
         f.write("\n")  
         
@@ -235,7 +246,7 @@ def trainingEmotion(data,results):
     
     global proba_word_Notsurprise
     global words_in_Notsurprise_phrase
-    
+    occWords = dict()
     occ_anger = 0
     occ_disgust = 0
     occ_fear = 0
@@ -411,30 +422,36 @@ def processPhraseEmotions(phrase):
 
 occWords = dict() 
 
-words_in_positive_phrase = dict()  
-words_in_negative_phrase = dict()   
+words_in_positive_phraseBinary = dict()  
+words_in_positive_phraseTriple = dict()  
+words_in_negative_phraseBinary = dict()   
+words_in_negative_phraseTriple = dict()   
 words_in_neutral_phrase = dict()   
-proba_positive_word = dict()
-proba_negative_word = dict()
+proba_positive_wordBinary = dict()
+proba_positive_wordTriple = dict()
+proba_negative_wordBinary = dict()
+proba_negative_wordTriple = dict()
 proba_neutral_word  = dict()
 
-proba_negative = 0
-proba_positive = 0
+proba_negativeBinary = 0
+proba_negativeTriple = 0
+proba_positiveBinary = 0
+proba_positiveTriple = 0
 proba_neutral  = 0
 
-def trainingValence(data,results):
-    global occWords
-    global words_in_positive_phrase 
-    global words_in_negative_phrase 
+def trainingTripleValence(data,results):
+    global occWords 
+    global words_in_positive_phraseTriple
+    global words_in_negative_phraseTriple 
     global words_in_neutral_phrase
-    global proba_negative
-    global proba_positive 
-    global proba_neutral
-    global proba_positive_word 
-    global proba_negative_word 
-    global proba_neutral_word
-    
+    global proba_negativeTriple 
+    global proba_positiveTriple
+    global proba_neutral 
+    global proba_positive_wordTriple 
+    global proba_negative_wordTriple 
+    global proba_neutral_word 
     occWords = dict()
+
     occ_positive = 0
     occ_negative = 0
     occ_neutral = 0
@@ -455,40 +472,80 @@ def trainingValence(data,results):
             addValue(occWords,word,1)
                           
             if polarity_phrase == 1:
-                addValue(words_in_positive_phrase,word,1)
+                addValue(words_in_positive_phraseTriple,word,1)
 
             if polarity_phrase == -1:
-                addValue(words_in_negative_phrase,word,1)
+                addValue(words_in_negative_phraseTriple,word,1)
 
             if polarity_phrase == 0:
                 addValue(words_in_neutral_phrase,word,1)
 
         for key in occWords:
-            proba_word_emotion(words_in_positive_phrase,proba_positive_word,key)
-            proba_word_emotion(words_in_negative_phrase,proba_negative_word,key)
+            proba_word_emotion(words_in_positive_phraseTriple,proba_positive_wordTriple,key)
+            proba_word_emotion(words_in_negative_phraseTriple,proba_negative_wordTriple,key)
             proba_word_emotion(words_in_neutral_phrase,proba_neutral_word,key)
 
     
-    proba_positive = occ_positive  / len(data.items()) 
-    proba_negative = occ_negative / len(data.items())      
+    proba_positiveTriple = occ_positive  / len(data.items()) 
+    proba_negativeTriple = occ_negative / len(data.items())      
     proba_neutral  = occ_neutral / len(data.items())  
 
+def trainingBinaryValence(data,results):
+    global occWords 
+    global words_in_positive_phraseBinary 
+    global words_in_negative_phraseBinary 
+    global proba_negativeBinary 
+    global proba_positiveBinary 
+    global proba_positive_wordBinary 
+    global proba_negative_wordBinary 
+    occWords = dict()
+    occ_positive = 0
+    occ_negative = 0
+    occ_neutral = 0
+    for id, phrase in data.items():
+        phrase = preprocessPhrase(phrase)
+        words = nltk.word_tokenize(phrase)
+        polarity_phrase = results.get(str(id))
+                
+        if polarity_phrase == 1:
+            occ_positive += 1
+        if polarity_phrase == 0:
+            occ_negative += 1
+
+            
+        for word in words:
+            word = lemmatizer.lemmatize(word)
+            addValue(occWords,word,1)
+                          
+            if polarity_phrase == 1:
+                addValue(words_in_positive_phraseBinary,word,1)
+
+            if polarity_phrase == 0:
+                addValue(words_in_negative_phraseBinary,word,1)
+
+        for key in occWords:
+            proba_word_emotion(words_in_positive_phraseBinary,proba_positive_wordBinary,key)
+            proba_word_emotion(words_in_negative_phraseBinary,proba_negative_wordBinary,key)
+
+    
+    proba_positiveBinary = occ_positive  / len(data.items()) 
+    proba_negativeBinary = occ_negative / len(data.items())      
 
 
 
-def processPhraseValence(phrase):
+def processPhraseValenceTriple(phrase):
     global occWords
-    global proba_positive_word 
-    global proba_negative_word 
+    global proba_positive_wordTriple 
+    global proba_negative_wordTriple
     global proba_neutral_word
-    global proba_negative
-    global proba_positive 
+    global proba_negativeTriple
+    global proba_positiveTriple
     global proba_neutral
     words = nltk.word_tokenize(phrase)
 
     
-    positiveproba = calculateProbaBayes(words,proba_positive_word, proba_positive )
-    negativeproba = calculateProbaBayes(words,proba_negative_word, proba_negative )
+    positiveproba = calculateProbaBayes(words,proba_positive_wordTriple, proba_positiveTriple )
+    negativeproba = calculateProbaBayes(words,proba_negative_wordTriple, proba_negativeTriple )
     neutralproba = calculateProbaBayes(words,proba_neutral_word, proba_neutral )
     
     positiveproba = positiveproba /(positiveproba+negativeproba+neutralproba)
@@ -497,29 +554,50 @@ def processPhraseValence(phrase):
     
      
 
-    if positiveproba > neutralproba + negativeproba:
+    if positiveproba > neutralproba +  negativeproba :
         return "1"
     if  negativeproba > neutralproba + positiveproba  : # neutralproba + positiveproba = notnegativeproba 
         return "-1"
     return "0"
         
-
+def processPhraseValenceBinary(phrase):
+    global occWords
+    global proba_positive_wordBinary 
+    global proba_negative_wordBinary 
+    global proba_negativeBinary
+    global proba_positiveBinary
+    words = nltk.word_tokenize(phrase)
+    
+    positiveproba = calculateProbaBayes(words,proba_positive_wordBinary, proba_positiveBinary )
+    negativeproba = calculateProbaBayes(words,proba_negative_wordBinary, proba_negativeBinary )
+    
+    positiveproba = positiveproba /(positiveproba+negativeproba)
+    negativeproba = negativeproba /(positiveproba+negativeproba)
+    
+    if positiveproba >=  negativeproba :
+        return "1"
+     # neutralproba + positiveproba = notnegativeproba 
+    return "0"
     
 
-def processTest(data, outputFilePathValence,outputFilePathEmotion):
-    fileValence = open(outputFilePathValence, 'w+')
+def processTest(data,outputFilePathEmotion,outputFilePathValenceBinary,outputFilePathValenceTriple):
+    fileValenceBinary = open(outputFilePathValenceBinary, 'w+')
+    fileValenceTriple = open(outputFilePathValenceTriple, 'w+')
     fileEmotion = open(outputFilePathEmotion, 'w+')
     for id, phrase in data.items():
         phrase = preprocessPhrase(phrase)
-        fileValence.write('{} {}\n'.format(id, processPhraseValence(phrase)))
+        fileValenceBinary.write('{} {}\n'.format(id, processPhraseValenceBinary(phrase)))
+        fileValenceTriple.write('{} {}\n'.format(id, processPhraseValenceTriple(phrase)))
         fileEmotion.write('{} {}\n'.format(id, processPhraseEmotions(phrase)))
 
-def training(training_data,FileEmotion,FileValence):
-    valenceDict = convert_csvValence_to_dict(FileValence)
+def training(training_data,FileEmotion,FileBinaryValence,FileTripleValence):
+    valenceBinaryDict = convert_csvValence_to_dict(FileBinaryValence)
+    valenceTripleDict = convert_csvValence_to_dict(FileTripleValence)
     emotionDict = convert_csvEmotions_to_dict(FileEmotion)
-    trainingValence(training_data,valenceDict)   
+    
+    trainingBinaryValence(training_data,valenceBinaryDict)   
+    trainingTripleValence(training_data,valenceTripleDict) 
     trainingEmotion(training_data,emotionDict)
-
 
         
 training_data = {}
@@ -527,13 +605,22 @@ test_data ={}
 
 loadXmlData('datasets/AffectiveText.trial/affectivetext_trial.xml', training_data)
 
-training(training_data,"datasets/AffectiveText.trial/emotion.csv","datasets/AffectiveText.trial/valence.csv")
+valenceFile = "datasets/AffectiveText.trial/affectivetext_trial.valence.gold"
+emotionFile = "datasets/AffectiveText.trial/affectivetext_trial.emotions.gold"
+
+convertEmotionFile(emotionFile,"datasets/AffectiveText.trial/emotion.csv")
+
+convertValenceFiles(valenceFile,"datasets/AffectiveText.trial/valenceBinary.csv","datasets/AffectiveText.trial/valenceTriple.csv")
+
+training(training_data,"datasets/AffectiveText.trial/emotion.csv","datasets/AffectiveText.trial/valenceBinary.csv","datasets/AffectiveText.trial/valenceTriple.csv")
  
 
 loadXmlData('datasets/AffectiveText.test/affectivetext_test.xml', test_data)
 
 outputfileTestEmotion = "results/test_emotions_Naive_Bayes.gold"
 
-outputfileTestValence = "results/test_valence_Naive_Bayes.gold"
+outputfileTestValenceBinary = "results/test_valenceBinary_Naive_Bayes.gold"
 
-processTest(test_data,outputfileTestValence,outputfileTestEmotion)        
+outputfileTestValenceTriple = "results/test_valenceTriple_Naive_Bayes.gold"
+
+processTest(test_data,outputfileTestEmotion,outputfileTestValenceBinary,outputfileTestValenceTriple)        

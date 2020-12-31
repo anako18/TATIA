@@ -112,7 +112,8 @@ emotionFile = "datasets/AffectiveText.test/affectivetext_test.emotions.gold"
 valence_SVM_result_file = 'results/test_valence_SVM.gold'
 valence_triple_SVM_result_file = 'results/test_triple_valence_SVM.gold'
 
-valence_NaiveBayes_result_file = "results/test_valence_Naive_Bayes.gold"
+valenceTriple_NaiveBayes_result_file = "results/test_valenceTriple_Naive_Bayes.gold"
+valenceBinary_NaiveBayes_result_file = "results/test_valenceBinary_Naive_Bayes.gold"
 valence_RuleBased_result_file = "results/test_valence_rule_based.gold"
 valence_triple_RuleBased_result_file = "results/test_triple_valence_rule_based.gold"
 
@@ -143,8 +144,10 @@ compaireEmotionClassificationReport(emotionFile, emotions_SVM_result_file)
 print("\n===============================================================================================================")
 print("============================================= Naive Bayes =======================================================")
 print("=================================================================================================================")
+print("====================================== Valence binary =============================================")
+compareValenceClassificationReport(valenceFile, valenceBinary_NaiveBayes_result_file)
 print("================================= Valence triple ========================================")
-compareValenceClassificationReport(valenceFile, valence_NaiveBayes_result_file)
+compareValenceClassificationReport(valenceFile, valenceTriple_NaiveBayes_result_file,1)
 print("===================================== Emotions ==========================================")
 compaireEmotionClassificationReport(emotionFile, emotions_NaiveBayes_result_file)
 

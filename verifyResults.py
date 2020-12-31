@@ -4,6 +4,9 @@ lenth = 0
 
 lines =[]
 limit = 10
+
+threshold_emotions = 20
+threshold_valence = 30
 def binaryResult(value, limit):
     if value < limit:
         return "0"
