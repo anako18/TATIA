@@ -256,49 +256,126 @@ loadXmlData('datasets/AffectiveText.test/affectivetext_test.xml', test_ids, test
 #Valence binary (positive and negative)
 loadValenceLabelsBinary(valence_trial_file, valence_training_labels)
 loadValenceLabelsBinary(valence_test_file, valence_test_labels)
-print('================================================================= Sentiment analysis (binary) =================================================================')
-result_valence_labels = classify(training_data, test_data, valence_training_labels, valence_test_labels)
 
 #Valence triple (positive, negative and neutral)
 loadValenceLabelsTriple(valence_trial_file, valence_triple_training_labels)
 loadValenceLabelsTriple(valence_test_file, valence_triple_test_labels)
+
+#Load emotions
+loadEmotionsLabelsTraining(emotions_trial_file)
+loadEmotionsLabelsTest(emotions_test_file)
+
+result_valence_labels = []
+result_triple_valence_labels = []
+
+result_anger_labels = []
+result_disgust_labels = []
+result_fear_labels = []
+result_joy_labels = []
+result_sadness_labels = []
+result_surprise_labels = []
+
+# 0 => SVM, kernel=rbf
+# 1 => SVM kernel=poly
+# 2 => SVM kernel=sigmoid
+# 3 => SVM kernel=linear
+# 4 => LinearSVC
+classifier_number = 4
+
+print('================================================================= Sentiment analysis (binary) =================================================================')
+result_valence_labels = classify(training_data, test_data, valence_training_labels, valence_test_labels, classifier_number)
+
 print('================================================================= Sentiment analysis (triple) =================================================================')
-result_triple_valence_labels = classify(training_data, test_data, valence_triple_training_labels, valence_triple_test_labels)
+result_triple_valence_labels = classify(training_data, test_data, valence_triple_training_labels, valence_triple_test_labels, classifier_number)
 
 #Emotions recognition
 print('==================================================================== Emotions recognition =====================================================================')
-loadEmotionsLabelsTraining(emotions_trial_file)
-loadEmotionsLabelsTest(emotions_test_file)
 print("=============================================================")
 print("=========================== Anger ===========================")
 print("=============================================================")
-result_anger_labels = classify(training_data, test_data, training_anger_labels, test_anger_labels)
+result_anger_labels = classify(training_data, test_data, training_anger_labels, test_anger_labels, classifier_number)
 
 print("=============================================================")
 print("=========================== Disgust =========================")
 print("=============================================================")
-result_disgust_labels = classify(training_data, test_data, training_disgust_labels, test_disgust_labels)
+result_disgust_labels = classify(training_data, test_data, training_disgust_labels, test_disgust_labels, classifier_number)
 
 print("=============================================================")
 print("=========================== Fear =========================")
 print("=============================================================")
-result_fear_labels = classify(training_data, test_data, training_fear_labels, test_fear_labels)
+result_fear_labels = classify(training_data, test_data, training_fear_labels, test_fear_labels, classifier_number)
 
 print("=============================================================")
 print("=========================== Joy =========================")
 print("=============================================================")
-result_joy_labels = classify(training_data, test_data, training_joy_labels, test_joy_labels)
+result_joy_labels = classify(training_data, test_data, training_joy_labels, test_joy_labels, classifier_number)
 
 print("=============================================================")
 print("=========================== Sadness =========================")
 print("=============================================================")
-result_sadness_labels = classify(training_data, test_data, training_sadness_labels, test_sadness_labels)
+result_sadness_labels = classify(training_data, test_data, training_sadness_labels, test_sadness_labels, classifier_number)
 
 print("=============================================================")
 print("=========================== Surprise =========================")
 print("=============================================================")
-result_surprise_labels = classify(training_data, test_data, training_surprise_labels, test_surprise_labels)
+result_surprise_labels = classify(training_data, test_data, training_surprise_labels, test_surprise_labels, classifier_number)
 
 writeEmotionsResultFile(test_ids, emotions_SVM_result_file)
 writeValenceResultFile(test_ids, valence_SVM_result_file, result_valence_labels)
 writeValenceResultFile(test_ids, valence_triple_SVM_result_file, result_triple_valence_labels)
+#the code below is to run all the classificators
+'''
+for i in range(5):
+    
+    result_valence_labels = []
+    result_triple_valence_labels = []
+
+    result_anger_labels = []
+    result_disgust_labels = []
+    result_fear_labels = []
+    result_joy_labels = []
+    result_sadness_labels = []
+    result_surprise_labels = []
+
+    print('================================================================= Sentiment analysis (binary) =================================================================')
+    result_valence_labels = classify(training_data, test_data, valence_training_labels, valence_test_labels, i)
+
+    print('================================================================= Sentiment analysis (triple) =================================================================')
+    result_triple_valence_labels = classify(training_data, test_data, valence_triple_training_labels, valence_triple_test_labels, i)
+
+    #Emotions recognition
+    print('==================================================================== Emotions recognition =====================================================================')
+    print("=============================================================")
+    print("=========================== Anger ===========================")
+    print("=============================================================")
+    result_anger_labels = classify(training_data, test_data, training_anger_labels, test_anger_labels, i)
+
+    print("=============================================================")
+    print("=========================== Disgust =========================")
+    print("=============================================================")
+    result_disgust_labels = classify(training_data, test_data, training_disgust_labels, test_disgust_labels, i)
+
+    print("=============================================================")
+    print("=========================== Fear =========================")
+    print("=============================================================")
+    result_fear_labels = classify(training_data, test_data, training_fear_labels, test_fear_labels, i)
+
+    print("=============================================================")
+    print("=========================== Joy =========================")
+    print("=============================================================")
+    result_joy_labels = classify(training_data, test_data, training_joy_labels, test_joy_labels, i)
+
+    print("=============================================================")
+    print("=========================== Sadness =========================")
+    print("=============================================================")
+    result_sadness_labels = classify(training_data, test_data, training_sadness_labels, test_sadness_labels, i)
+
+    print("=============================================================")
+    print("=========================== Surprise =========================")
+    print("=============================================================")
+    result_surprise_labels = classify(training_data, test_data, training_surprise_labels, test_surprise_labels, i)
+
+    writeEmotionsResultFile(test_ids, emotions_SVM_result_file)
+    writeValenceResultFile(test_ids, valence_SVM_result_file, result_valence_labels)
+    writeValenceResultFile(test_ids, valence_triple_SVM_result_file, result_triple_valence_labels)
+'''
