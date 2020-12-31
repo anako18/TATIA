@@ -179,7 +179,7 @@ def writeEmotionsResultFile(test_ids, emotions_result_file_path):
 
 def classify(training_data, test_data, training_labels, test_labels):
     #vectorization with tfid
-    vectorizer = TfidfVectorizer(ngram_range = (1,3), min_df=2, max_df = 0.8, sublinear_tf = True)
+    vectorizer = TfidfVectorizer(ngram_range = (1,2), min_df=3, max_df = 0.8, sublinear_tf = True)
     train_vectors = vectorizer.fit_transform(training_data)
     test_vectors = vectorizer.transform(test_data)
 

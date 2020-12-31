@@ -35,7 +35,7 @@ def compareValenceClassificationReport(testFilePath, resultFilePath, triple = 0)
     for i in range(len(firstFileValence)):
         coefs1 = firstFileValence[i].split()
         coefs2 = secondFileValence[i].split()
-        testValenceValue = toBinary(int(coefs1[1]), threshold_valence)
+        testValenceValue = toBinary(int(coefs1[1]), 0)
         if triple == 1:
             testValenceValue = toTriple(int(coefs1[1]), threshold_valence)    
         resultValenceValue = int(coefs2[1])
